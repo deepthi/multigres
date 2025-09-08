@@ -17,47 +17,19 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"time"
 
-	"github.com/multigres/multigres/go/provisioner"
-	"github.com/multigres/multigres/go/servenv"
+	"github.com/multigres/multigres/go/cmd/multigres/internal/adminclient"
 
 	"github.com/spf13/cobra"
 )
 
-// teardownAllServices stops all provisioned services using the provisioner's Teardown method
-func teardownAllServices(ctx context.Context, provisionerName string, configPaths []string, clean bool) error {
-	// Create provisioner instance
-	p, err := provisioner.GetProvisioner(provisionerName)
+// stop handles the stopping of a multigres cluster
+func stop(cmd *cobra.Command, args []string) error {
+	// Get admin server endpoint
+	adminEndpoint, err := cmd.Flags().GetString("admin-endpoint")
 	if err != nil {
-		return fmt.Errorf("failed to create provisioner '%s': %w", provisionerName, err)
-	}
-
-	// Let provisioner load its own configuration
-	if err := p.LoadConfig(configPaths); err != nil {
-		return fmt.Errorf("failed to load provisioner config: %w", err)
-	}
-
-	// Use the provisioner's teardown method
-	if err := p.Teardown(ctx, clean); err != nil {
-		return fmt.Errorf("failed to teardown services: %w", err)
-	}
-
-	return nil
-}
-
-// down handles the cluster down command
-func down(cmd *cobra.Command, args []string) error {
-	servenv.FireRunHooks()
-	fmt.Println("Stopping Multigres cluster...")
-
-	// Get the clean flag
-	clean, err := cmd.Flags().GetBool("clean")
-	if err != nil {
-		return fmt.Errorf("failed to get clean flag: %w", err)
-	}
-
-	if clean {
-		fmt.Println("Warning: clean mode, all data for this local cluster will be deleted")
+		return fmt.Errorf("failed to get admin-endpoint flag: %w", err)
 	}
 
 	// Get config paths from flags
@@ -69,23 +41,43 @@ func down(cmd *cobra.Command, args []string) error {
 		configPaths = []string{"."}
 	}
 
-	// Load configuration to determine provisioner type
-	config, configFile, err := LoadConfig(configPaths)
+	// Get clean flag
+	clean, err := cmd.Flags().GetBool("clean")
 	if err != nil {
-		return fmt.Errorf("failed to load configuration: %w. Run 'multigres cluster init' first", err)
+		return fmt.Errorf("failed to get clean flag: %w", err)
 	}
 
-	fmt.Printf("Using configuration from: %s\n", configFile)
-	fmt.Printf("Stopping cluster with provisioner: %s\n", config.Provisioner)
+	fmt.Println("Stopping Multigres cluster...")
 
-	ctx := context.Background()
+	// Create admin client
+	client, err := adminclient.NewClient(adminEndpoint)
+	if err != nil {
+		return fmt.Errorf("failed to connect to admin server at %s: %w", adminEndpoint, err)
+	}
+	defer client.Close()
 
-	// Teardown all services using the provisioner
-	if err := teardownAllServices(ctx, config.Provisioner, configPaths, clean); err != nil {
-		return fmt.Errorf("failed to teardown services: %w", err)
+	// Stop cluster
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	resp, err := client.StopCluster(ctx, configPaths, "", clean)
+	if err != nil {
+		return fmt.Errorf("failed to stop cluster: %w", err)
 	}
 
-	fmt.Println("Multigres cluster stopped successfully!")
+	fmt.Printf("✅ %s\n", resp.Message)
+
+	if len(resp.ServicesStopped) > 0 {
+		fmt.Println("\nStopped services:")
+		for _, service := range resp.ServicesStopped {
+			fmt.Printf("  - %s\n", service)
+		}
+	}
+
+	if clean {
+		fmt.Println("🧹 All cluster data has been cleaned up")
+	}
+
 	return nil
 }
 
@@ -93,9 +85,10 @@ var StopCommand = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop local cluster",
 	Long:  "Stop the local Multigres cluster. Use --clean to fully tear down all resources.",
-	RunE:  down,
+	RunE:  stop,
 }
 
 func init() {
 	StopCommand.Flags().Bool("clean", false, "Fully tear down all cluster resources")
+	StopCommand.Flags().String("admin-endpoint", "localhost:15990", "Admin server endpoint")
 }

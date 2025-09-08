@@ -203,7 +203,7 @@ func (p *localProvisioner) DefaultConfig() map[string]interface{} {
 		Multigateway: MultigatewayConfig{
 			Path:     filepath.Join(binDir, "multigateway"),
 			HttpPort: 15001,
-			GrpcPort: 15990,
+			GrpcPort: 15991,
 			PgPort:   15432,
 			LogLevel: "info",
 		},
@@ -324,7 +324,7 @@ func (p *localProvisioner) provisionEtcd(ctx context.Context, req *provisioner.P
 	}
 
 	// Start etcd process
-	etcdCmd := exec.CommandContext(ctx, etcdBinary, args...)
+	etcdCmd := exec.CommandContext(context.Background(), etcdBinary, args...)
 
 	fmt.Printf("▶️  - Launching etcd on port %d...", port)
 
@@ -725,7 +725,7 @@ func (p *localProvisioner) provisionMultigateway(ctx context.Context, req *provi
 	}
 
 	// Start multigateway process
-	multigatewayCmd := exec.CommandContext(ctx, multigatewayBinary, args...)
+	multigatewayCmd := exec.CommandContext(context.Background(), multigatewayBinary, args...)
 
 	fmt.Printf("▶️  - Launching multigateway (HTTP:%d, gRPC:%d)...", httpPort, grpcPort)
 
@@ -854,7 +854,7 @@ func (p *localProvisioner) provisionMultipooler(ctx context.Context, req *provis
 	}
 
 	// Start multipooler process
-	multipoolerCmd := exec.CommandContext(ctx, multipoolerBinary, args...)
+	multipoolerCmd := exec.CommandContext(context.Background(), multipoolerBinary, args...)
 
 	fmt.Printf("▶️  - Launching multipooler (gRPC:%d)...", grpcPort)
 
@@ -976,7 +976,7 @@ func (p *localProvisioner) provisionMultiOrch(ctx context.Context, req *provisio
 	}
 
 	// Start multiorch process
-	multiorchCmd := exec.CommandContext(ctx, multiorchBinary, args...)
+	multiorchCmd := exec.CommandContext(context.Background(), multiorchBinary, args...)
 
 	fmt.Printf("▶️  - Launching multiorch (gRPC:%d)...", grpcPort)
 
@@ -1314,8 +1314,20 @@ func (p *localProvisioner) stopProcessByPID(pid int) error {
 		}
 	}
 
-	// Wait a bit for the process to exit
-	time.Sleep(2 * time.Second)
+	// Wait for process to actually terminate
+	for i := 0; i < 20; i++ { // Wait up to 10 seconds (20 * 500ms)
+		// Check if process still exists
+		err := process.Signal(syscall.Signal(0))
+		if err != nil {
+			// Process no longer exists, success
+			fmt.Printf("Process %d successfully terminated\n", pid)
+			return nil
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	// Process still exists after timeout
+	fmt.Printf("Warning: Process %d may still be running after stop attempt\n", pid)
 
 	fmt.Printf("Process %d stopped successfully\n", pid)
 	return nil

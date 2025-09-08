@@ -1,0 +1,807 @@
+time=2025-09-05T15:36:43.520-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:43.520-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:43.520-07:00 level=INFO msg="Admin server starting up" port=15601 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:43.520-07:00 level=INFO msg="Admin server started" address=localhost:15601
+time=2025-09-05T15:36:43.520-07:00 level=INFO msg="Admin server starting" port=15601
+time=2025-09-05T15:36:43.521-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:43.521-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:43.690-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test3465868921]
+time=2025-09-05T15:36:43.691-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test3465868921/multigres.yaml provisioner=local
+time=2025-09-05T15:36:43.692-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/directory]
+time=2025-09-05T15:36:43.693-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_file_test500180487]
+time=2025-09-05T15:36:43.694-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_exists_test1250994382]
+time=2025-09-05T15:36:43.696-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test96684728]
+time=2025-09-05T15:36:43.696-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test96684728/multigres.yaml provisioner=local
+time=2025-09-05T15:36:43.697-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:43.697-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:43.697-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:43.697-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:43.697-07:00 level=INFO msg="sleeping an extra 49.925209ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:43.748-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:43.748-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:43.748-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:43.749-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="Admin server starting up" port=15602 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="Admin server started" address=localhost:15602
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="Admin server starting" port=15602
+time=2025-09-05T15:36:43.767-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:43.768-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:46.330-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_start_test3701714871] cluster_id=""
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="StartCluster called" config_paths=[/nonexistent/path] cluster_id=""
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:50.648-07:00 level=INFO msg="sleeping an extra 49.927333ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:50.699-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:50.699-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:50.699-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:50.699-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="Admin server starting up" port=15610 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="Admin server started" address=localhost:15610
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="Admin server starting" port=15610
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:50.717-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:50.911-07:00 level=INFO msg="StopCluster called" cluster_id=nonexistent-cluster clean=false
+time=2025-09-05T15:36:50.912-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=false
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=true
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:50.913-07:00 level=INFO msg="sleeping an extra 49.970459ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:50.964-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:50.964-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:50.964-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:50.964-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:36:50.984-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:50.984-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:50.984-07:00 level=INFO msg="Admin server starting up" port=15625 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:50.984-07:00 level=INFO msg="Admin server started" address=localhost:15625
+time=2025-09-05T15:36:50.984-07:00 level=INFO msg="Admin server starting" port=15625
+time=2025-09-05T15:36:50.985-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:50.985-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:51.171-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test921239321]
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test921239321/multigres.yaml provisioner=local
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:51.172-07:00 level=INFO msg="sleeping an extra 49.95ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:51.224-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:51.224-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:51.224-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:51.224-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="Admin server starting up" port=15626 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="Admin server started" address=localhost:15626
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="Admin server starting" port=15626
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:51.241-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:51.428-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test3694169782]
+time=2025-09-05T15:36:51.429-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test3694169782/multigres.yaml provisioner=local
+time=2025-09-05T15:36:51.430-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test562238421]
+time=2025-09-05T15:36:51.430-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test562238421/multigres.yaml provisioner=local
+time=2025-09-05T15:36:51.430-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test4002245056]
+time=2025-09-05T15:36:51.431-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test4002245056/multigres.yaml provisioner=local
+time=2025-09-05T15:36:51.432-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:51.432-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:51.432-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:51.432-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:51.432-07:00 level=INFO msg="sleeping an extra 49.953375ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:51.483-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:51.483-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:51.483-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:51.483-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:36:51.505-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:36:51.505-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:36:51.505-07:00 level=INFO msg="Admin server starting up" port=15627 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:36:51.505-07:00 level=INFO msg="Admin server started" address=localhost:15627
+time=2025-09-05T15:36:51.505-07:00 level=INFO msg="Admin server starting" port=15627
+time=2025-09-05T15:36:51.506-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:36:51.506-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:36:51.644-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:36:51.644-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:36:51.644-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:36:51.644-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:36:51.644-07:00 level=INFO msg="sleeping an extra 49.89075ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:36:51.695-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:36:51.695-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:36:51.695-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:36:51.695-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:37:42.020-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:37:42.020-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:37:42.020-07:00 level=INFO msg="Admin server starting up" port=13701 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:37:42.021-07:00 level=INFO msg="Admin server started" address=localhost:13701
+time=2025-09-05T15:37:42.021-07:00 level=INFO msg="Admin server starting" port=13701
+time=2025-09-05T15:37:42.021-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:37:42.021-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:37:42.193-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test2093291415]
+time=2025-09-05T15:37:42.195-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test2093291415/multigres.yaml provisioner=local
+time=2025-09-05T15:37:42.198-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/directory]
+time=2025-09-05T15:37:42.199-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_file_test4159624355]
+time=2025-09-05T15:37:42.200-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_exists_test3887449485]
+time=2025-09-05T15:37:42.201-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test855692618]
+time=2025-09-05T15:37:42.201-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test855692618/multigres.yaml provisioner=local
+time=2025-09-05T15:37:42.201-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:37:42.201-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:37:42.202-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:37:42.202-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:37:42.202-07:00 level=INFO msg="sleeping an extra 49.962916ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:37:42.253-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:37:42.253-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:37:42.253-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:37:42.253-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:06.667-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:06.667-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:06.667-07:00 level=INFO msg="Admin server starting up" port=12501 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:06.668-07:00 level=INFO msg="Admin server started" address=localhost:12501
+time=2025-09-05T15:38:06.668-07:00 level=INFO msg="Admin server starting" port=12501
+time=2025-09-05T15:38:06.668-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:06.668-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:06.783-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test306436961]
+time=2025-09-05T15:38:06.784-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test306436961/multigres.yaml provisioner=local
+time=2025-09-05T15:38:06.890-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/path/that/should/not/exist]
+time=2025-09-05T15:38:06.994-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test_file1666646213]
+time=2025-09-05T15:38:07.104-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths="[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test1765948640 /var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test2253882212]"
+time=2025-09-05T15:38:07.105-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test1765948640/multigres.yaml provisioner=local
+time=2025-09-05T15:38:07.107-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:07.107-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:07.107-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:07.107-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:07.107-07:00 level=INFO msg="sleeping an extra 49.945167ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:07.158-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:07.158-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:07.158-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:07.158-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:07.182-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:07.182-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:07.182-07:00 level=INFO msg="Admin server starting up" port=12502 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:07.182-07:00 level=INFO msg="Admin server started" address=localhost:12502
+time=2025-09-05T15:38:07.183-07:00 level=INFO msg="Admin server starting" port=12502
+time=2025-09-05T15:38:07.183-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:07.183-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:07.380-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_config_test753512626]
+time=2025-09-05T15:38:07.381-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_config_test753512626/multigres.yaml provisioner=local
+time=2025-09-05T15:38:07.382-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:07.382-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:07.382-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:07.382-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:07.382-07:00 level=INFO msg="sleeping an extra 49.957917ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:07.432-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:07.432-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:07.432-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:07.432-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="Admin server starting up" port=12503 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="Admin server started" address=localhost:12503
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="Admin server starting" port=12503
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:07.450-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:07.649-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_exists_test1298486173]
+time=2025-09-05T15:38:07.650-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:07.650-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:07.650-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:07.650-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:07.650-07:00 level=INFO msg="sleeping an extra 49.944875ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:07.702-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:07.702-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:07.702-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:07.702-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:07.716-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:07.716-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:07.716-07:00 level=INFO msg="Admin server starting up" port=12504 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:07.717-07:00 level=INFO msg="Admin server started" address=localhost:12504
+time=2025-09-05T15:38:07.717-07:00 level=INFO msg="Admin server starting" port=12504
+time=2025-09-05T15:38:07.717-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:07.717-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:10.328-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test4174552819] cluster_id=""
+time=2025-09-05T15:38:14.395-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:14.395-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:14.395-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:14.395-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:14.395-07:00 level=INFO msg="sleeping an extra 49.86425ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:14.446-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:14.446-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:14.446-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:14.446-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="Admin server starting up" port=12512 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="Admin server started" address=localhost:12512
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="Admin server starting" port=12512
+time=2025-09-05T15:38:14.464-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:14.465-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:14.660-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test4096118778]
+time=2025-09-05T15:38:14.661-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test4096118778/multigres.yaml provisioner=local
+time=2025-09-05T15:38:14.662-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/directory]
+time=2025-09-05T15:38:14.663-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_file_test507366824]
+time=2025-09-05T15:38:14.663-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_exists_test977179914]
+time=2025-09-05T15:38:14.664-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test3661274825]
+time=2025-09-05T15:38:14.664-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test3661274825/multigres.yaml provisioner=local
+time=2025-09-05T15:38:14.665-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:14.665-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:14.665-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:14.665-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:14.665-07:00 level=INFO msg="sleeping an extra 49.961167ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:14.716-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:14.716-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:14.716-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:14.716-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="Admin server starting up" port=12513 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="Admin server started" address=localhost:12513
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="Admin server starting" port=12513
+time=2025-09-05T15:38:14.741-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:14.742-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:17.310-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_start_test2611849574] cluster_id=""
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="StartCluster called" config_paths=[/nonexistent/path] cluster_id=""
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:21.356-07:00 level=INFO msg="sleeping an extra 49.951083ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:21.408-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:21.408-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:21.408-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:21.408-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="Admin server starting up" port=12521 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="Admin server started" address=localhost:12521
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="Admin server starting" port=12521
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:21.427-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:21.618-07:00 level=INFO msg="StopCluster called" cluster_id=nonexistent-cluster clean=false
+time=2025-09-05T15:38:21.619-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=false
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=true
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:21.620-07:00 level=INFO msg="sleeping an extra 49.924209ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:21.672-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:21.672-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:21.672-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:21.672-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="Admin server starting up" port=12536 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="Admin server started" address=localhost:12536
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="Admin server starting" port=12536
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:21.692-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:21.883-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test1867305272]
+time=2025-09-05T15:38:21.884-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test1867305272/multigres.yaml provisioner=local
+time=2025-09-05T15:38:21.885-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:21.885-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:21.885-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:21.885-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:21.885-07:00 level=INFO msg="sleeping an extra 49.954875ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:21.936-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:21.936-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:21.936-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:21.936-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="Admin server starting up" port=12537 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="Admin server started" address=localhost:12537
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="Admin server starting" port=12537
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:21.961-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:22.150-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test1293624162]
+time=2025-09-05T15:38:22.152-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test1293624162/multigres.yaml provisioner=local
+time=2025-09-05T15:38:22.152-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test1635620491]
+time=2025-09-05T15:38:22.153-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test1635620491/multigres.yaml provisioner=local
+time=2025-09-05T15:38:22.153-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test2147682920]
+time=2025-09-05T15:38:22.154-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test2147682920/multigres.yaml provisioner=local
+time=2025-09-05T15:38:22.156-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:22.156-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:22.156-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:22.156-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:22.156-07:00 level=INFO msg="sleeping an extra 49.945541ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:22.207-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:22.207-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:22.208-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:22.208-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:38:22.236-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:38:22.236-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:38:22.236-07:00 level=INFO msg="Admin server starting up" port=12538 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:38:22.237-07:00 level=INFO msg="Admin server started" address=localhost:12538
+time=2025-09-05T15:38:22.237-07:00 level=INFO msg="Admin server starting" port=12538
+time=2025-09-05T15:38:22.237-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:38:22.237-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:38:22.370-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:38:22.370-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:38:22.370-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:38:22.370-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:38:22.370-07:00 level=INFO msg="sleeping an extra 49.906833ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:38:22.421-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:38:22.421-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:38:22.421-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:38:22.421-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:40:29.164-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:40:29.164-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:40:29.164-07:00 level=INFO msg="Admin server starting up" port=11701 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:40:29.165-07:00 level=INFO msg="Admin server started" address=localhost:11701
+time=2025-09-05T15:40:29.165-07:00 level=INFO msg="Admin server starting" port=11701
+time=2025-09-05T15:40:29.165-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:40:29.165-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:40:31.688-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test1316338027] cluster_id=""
+time=2025-09-05T15:41:06.229-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:41:06.229-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:41:06.229-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:41:06.229-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:41:06.229-07:00 level=INFO msg="sleeping an extra 49.753208ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:41:06.280-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:41:06.280-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:41:06.280-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:41:06.280-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:44:04.237-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:44:04.237-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:44:04.237-07:00 level=INFO msg="Admin server starting up" port=11201 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:44:04.238-07:00 level=INFO msg="Admin server started" address=localhost:11201
+time=2025-09-05T15:44:04.238-07:00 level=INFO msg="Admin server starting" port=11201
+time=2025-09-05T15:44:04.238-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:44:04.238-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:44:06.824-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test4222921254] cluster_id=""
+time=2025-09-05T15:44:40.910-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:44:40.910-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:44:40.910-07:00 level=INFO msg="Admin server starting up" port=16001 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:44:40.911-07:00 level=INFO msg="Admin server started" address=localhost:16001
+time=2025-09-05T15:44:40.911-07:00 level=INFO msg="Admin server starting" port=16001
+time=2025-09-05T15:44:40.911-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:44:40.911-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:44:43.432-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test3520715222] cluster_id=""
+time=2025-09-05T15:45:20.115-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="Admin server starting up" port=11601 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="Admin server started" address=localhost:11601
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="Admin server starting" port=11601
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:45:20.116-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:45:22.603-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test2943459194] cluster_id=""
+time=2025-09-05T15:45:31.733-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:45:31.733-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:45:31.733-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:45:31.733-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:45:31.733-07:00 level=INFO msg="sleeping an extra 49.862833ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:45:31.784-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:45:31.784-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:45:31.784-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:45:31.784-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:47:52.496-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:47:52.496-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:47:52.496-07:00 level=INFO msg="Admin server starting up" port=13601 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:47:52.496-07:00 level=INFO msg="Admin server started" address=localhost:13601
+time=2025-09-05T15:47:52.496-07:00 level=INFO msg="Admin server starting" port=13601
+time=2025-09-05T15:47:52.497-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:47:52.497-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:47:55.010-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test2803911091] cluster_id=""
+time=2025-09-05T15:48:08.355-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T15:48:08.355-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T15:48:08.355-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T15:48:08.355-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T15:48:08.355-07:00 level=INFO msg="sleeping an extra 49.838041ms after OnTermSync to finish lameduck period"
+time=2025-09-05T15:48:08.406-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T15:48:08.406-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T15:48:08.406-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T15:48:08.406-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T15:49:38.374-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T15:49:38.374-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T15:49:38.374-07:00 level=INFO msg="Admin server starting up" port=7001 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T15:49:38.375-07:00 level=INFO msg="Admin server started" address=localhost:7001
+time=2025-09-05T15:49:38.375-07:00 level=INFO msg="Admin server starting" port=7001
+time=2025-09-05T15:49:38.375-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T15:49:38.375-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T15:49:40.842-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test443133086] cluster_id=""
+time=2025-09-05T16:21:44.387-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:21:44.387-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:21:44.387-07:00 level=INFO msg="Admin server starting up" port=14901 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:21:44.388-07:00 level=INFO msg="Admin server started" address=localhost:14901
+time=2025-09-05T16:21:44.388-07:00 level=INFO msg="Admin server starting" port=14901
+time=2025-09-05T16:21:44.388-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:21:44.388-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:21:46.920-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test1991910877] cluster_id=""
+time=2025-09-05T16:21:56.222-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:21:56.222-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:21:56.222-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:21:56.222-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:21:56.222-07:00 level=INFO msg="sleeping an extra 49.846583ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:21:56.273-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:21:56.273-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:21:56.273-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:21:56.273-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:22:49.705-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:22:49.705-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:22:49.705-07:00 level=INFO msg="Admin server starting up" port=12601 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:22:49.706-07:00 level=INFO msg="Admin server started" address=localhost:12601
+time=2025-09-05T16:22:49.706-07:00 level=INFO msg="Admin server starting" port=12601
+time=2025-09-05T16:22:49.706-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:22:49.706-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:22:52.231-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test1609065353] cluster_id=""
+time=2025-09-05T16:23:01.267-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:23:01.267-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:23:01.267-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:23:01.267-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:23:01.267-07:00 level=INFO msg="sleeping an extra 49.912459ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:23:01.318-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:23:01.318-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:23:01.318-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:23:01.318-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:23:19.558-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:23:19.558-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:23:19.558-07:00 level=INFO msg="Admin server starting up" port=7701 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:23:19.558-07:00 level=INFO msg="Admin server started" address=localhost:7701
+time=2025-09-05T16:23:19.558-07:00 level=INFO msg="Admin server starting" port=7701
+time=2025-09-05T16:23:19.559-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:23:19.559-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:23:22.046-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test1009116596] cluster_id=""
+time=2025-09-05T16:23:31.151-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:23:31.151-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:23:31.151-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:23:31.151-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:23:31.151-07:00 level=INFO msg="sleeping an extra 49.849083ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:23:31.202-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:23:31.202-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:23:31.202-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:23:31.202-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:24:15.875-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:24:15.875-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:24:15.876-07:00 level=INFO msg="Admin server starting up" port=14201 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:24:15.876-07:00 level=INFO msg="Admin server started" address=localhost:14201
+time=2025-09-05T16:24:15.876-07:00 level=INFO msg="Admin server starting" port=14201
+time=2025-09-05T16:24:15.876-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:24:15.876-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:24:18.402-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test3889451553] cluster_id=""
+time=2025-09-05T16:24:27.430-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:24:27.430-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:24:27.430-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:24:27.430-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:24:27.430-07:00 level=INFO msg="sleeping an extra 49.922709ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:24:27.481-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:24:27.481-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:24:27.481-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:24:27.481-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:24:46.178-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:24:46.178-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:24:46.178-07:00 level=INFO msg="Admin server starting up" port=10201 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:24:46.178-07:00 level=INFO msg="Admin server started" address=localhost:10201
+time=2025-09-05T16:24:46.179-07:00 level=INFO msg="Admin server starting" port=10201
+time=2025-09-05T16:24:46.179-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:24:46.179-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:24:48.682-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test4073120539] cluster_id=""
+time=2025-09-05T16:24:57.713-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:24:57.713-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:24:57.713-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:24:57.713-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:24:57.713-07:00 level=INFO msg="sleeping an extra 49.884458ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:24:57.764-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:24:57.764-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:24:57.764-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:24:57.764-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="Admin server starting up" port=7501 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="Admin server started" address=localhost:7501
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="Admin server starting" port=7501
+time=2025-09-05T16:29:07.138-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:29:07.139-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:29:09.602-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test974533741] cluster_id=""
+time=2025-09-05T16:29:18.633-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:29:18.633-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:29:18.633-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:29:18.634-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:29:18.634-07:00 level=INFO msg="sleeping an extra 49.892167ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:29:18.685-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:29:18.685-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:29:18.685-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:29:18.685-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:30:11.518-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:30:11.518-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:30:11.519-07:00 level=INFO msg="Admin server starting up" port=14401 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:30:11.519-07:00 level=INFO msg="Admin server started" address=localhost:14401
+time=2025-09-05T16:30:11.519-07:00 level=INFO msg="Admin server starting" port=14401
+time=2025-09-05T16:30:11.519-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:30:11.519-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:30:14.008-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test970688745] cluster_id=""
+time=2025-09-05T16:30:23.227-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:30:23.227-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:30:23.227-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:30:23.227-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:30:23.227-07:00 level=INFO msg="sleeping an extra 49.862083ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:30:23.279-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:30:23.279-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:30:23.279-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:30:23.279-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:31:12.974-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:31:12.974-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:31:12.974-07:00 level=INFO msg="Admin server starting up" port=10601 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:31:12.975-07:00 level=INFO msg="Admin server started" address=localhost:10601
+time=2025-09-05T16:31:12.975-07:00 level=INFO msg="Admin server starting" port=10601
+time=2025-09-05T16:31:12.975-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:31:12.975-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:31:15.511-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test2148093910] cluster_id=""
+time=2025-09-05T16:31:25.528-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:31:25.528-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:31:25.528-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:31:25.528-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:31:25.528-07:00 level=INFO msg="sleeping an extra 49.886083ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:31:25.578-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:31:25.578-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:31:25.578-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:31:25.579-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="Admin server starting up" port=7101 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="Admin server started" address=localhost:7101
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="Admin server starting" port=7101
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:32:18.232-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:32:20.780-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test3353314298] cluster_id=""
+time=2025-09-05T16:32:30.819-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:32:30.819-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:32:30.819-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:32:30.819-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:32:30.819-07:00 level=INFO msg="sleeping an extra 49.888333ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:32:30.870-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:32:30.870-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:32:30.870-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:32:30.870-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:32:58.316-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:32:58.316-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:32:58.316-07:00 level=INFO msg="Admin server starting up" port=12701 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:32:58.317-07:00 level=INFO msg="Admin server started" address=localhost:12701
+time=2025-09-05T16:32:58.317-07:00 level=INFO msg="Admin server starting" port=12701
+time=2025-09-05T16:32:58.317-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:32:58.317-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:33:00.789-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test2649748035] cluster_id=""
+time=2025-09-05T16:33:10.805-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:33:10.805-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:33:10.805-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:33:10.805-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:33:10.805-07:00 level=INFO msg="sleeping an extra 49.882708ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:33:10.856-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:33:10.856-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:33:10.856-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:33:10.856-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="Admin server starting up" port=7701 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="Admin server started" address=localhost:7701
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="Admin server starting" port=7701
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:33:35.607-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:33:38.091-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test2641105871] cluster_id=""
+time=2025-09-05T16:33:48.102-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:33:48.102-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:33:48.102-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:33:48.102-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:33:48.102-07:00 level=INFO msg="sleeping an extra 49.888625ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:33:48.153-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:33:48.153-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:33:48.153-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:33:48.153-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="Admin server starting up" port=12201 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="Admin server started" address=localhost:12201
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="Admin server starting" port=12201
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:10.790-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:10.980-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test2661512733]
+time=2025-09-05T16:34:10.981-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test2661512733/multigres.yaml provisioner=local
+time=2025-09-05T16:34:11.085-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/path/that/should/not/exist]
+time=2025-09-05T16:34:11.193-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test_file1356802183]
+time=2025-09-05T16:34:11.309-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths="[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test12059308312 /var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test22300531473]"
+time=2025-09-05T16:34:11.309-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_test12059308312/multigres.yaml provisioner=local
+time=2025-09-05T16:34:11.312-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:11.312-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:11.312-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:11.312-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:11.312-07:00 level=INFO msg="sleeping an extra 49.947625ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:11.363-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:11.363-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:11.363-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:11.363-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:11.383-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:11.383-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:11.383-07:00 level=INFO msg="Admin server starting up" port=12202 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:11.383-07:00 level=INFO msg="Admin server started" address=localhost:12202
+time=2025-09-05T16:34:11.383-07:00 level=INFO msg="Admin server starting" port=12202
+time=2025-09-05T16:34:11.384-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:11.384-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:11.581-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_config_test2545616199]
+time=2025-09-05T16:34:11.582-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_config_test2545616199/multigres.yaml provisioner=local
+time=2025-09-05T16:34:11.585-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:11.585-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:11.585-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:11.585-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:11.585-07:00 level=INFO msg="sleeping an extra 49.951125ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:11.636-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:11.636-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:11.636-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:11.636-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:11.662-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:11.662-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:11.662-07:00 level=INFO msg="Admin server starting up" port=12203 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:11.663-07:00 level=INFO msg="Admin server started" address=localhost:12203
+time=2025-09-05T16:34:11.663-07:00 level=INFO msg="Admin server starting" port=12203
+time=2025-09-05T16:34:11.663-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:11.663-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:11.864-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_init_exists_test3345539223]
+time=2025-09-05T16:34:11.866-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:11.866-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:11.866-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:11.866-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:11.866-07:00 level=INFO msg="sleeping an extra 49.955ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:11.916-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:11.916-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:11.916-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:11.916-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:11.933-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:11.933-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:11.933-07:00 level=INFO msg="Admin server starting up" port=12204 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:11.934-07:00 level=INFO msg="Admin server started" address=localhost:12204
+time=2025-09-05T16:34:11.934-07:00 level=INFO msg="Admin server starting" port=12204
+time=2025-09-05T16:34:11.934-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:11.934-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:14.474-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/multigres_lifecycle_test1676130698] cluster_id=""
+time=2025-09-05T16:34:24.491-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:24.491-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:24.491-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:24.491-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:24.491-07:00 level=INFO msg="sleeping an extra 49.863959ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:24.542-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:24.542-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:24.542-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:24.542-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="Admin server starting up" port=12212 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="Admin server started" address=localhost:12212
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="Admin server starting" port=12212
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:24.559-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:24.748-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test2903531753]
+time=2025-09-05T16:34:24.749-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_test2903531753/multigres.yaml provisioner=local
+time=2025-09-05T16:34:24.749-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/nonexistent/directory]
+time=2025-09-05T16:34:24.749-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_file_test3039488838]
+time=2025-09-05T16:34:24.750-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_exists_test2208068020]
+time=2025-09-05T16:34:24.751-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test3814450659]
+time=2025-09-05T16:34:24.751-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_init_custom_test3814450659/multigres.yaml provisioner=local
+time=2025-09-05T16:34:24.752-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:24.752-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:24.752-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:24.752-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:24.752-07:00 level=INFO msg="sleeping an extra 49.968333ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:24.803-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:24.803-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:24.803-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:24.803-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="Admin server starting up" port=12213 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="Admin server started" address=localhost:12213
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="Admin server starting" port=12213
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:24.823-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:27.386-07:00 level=INFO msg="StartCluster called" config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_start_test1824154534] cluster_id=""
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="StartCluster called" config_paths=[/nonexistent/path] cluster_id=""
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:31.434-07:00 level=INFO msg="sleeping an extra 49.955375ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:31.485-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:31.485-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:31.485-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:31.485-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="Admin server starting up" port=12221 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="Admin server started" address=localhost:12221
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="Admin server starting" port=12221
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:31.505-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:31.700-07:00 level=INFO msg="StopCluster called" cluster_id=nonexistent-cluster clean=false
+time=2025-09-05T16:34:31.701-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=false
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="StopCluster called" cluster_id="" clean=true
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:31.702-07:00 level=INFO msg="sleeping an extra 49.962958ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:31.754-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:31.754-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:31.754-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:31.754-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:31.780-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:31.780-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:31.780-07:00 level=INFO msg="Admin server starting up" port=12236 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:31.781-07:00 level=INFO msg="Admin server started" address=localhost:12236
+time=2025-09-05T16:34:31.781-07:00 level=INFO msg="Admin server starting" port=12236
+time=2025-09-05T16:34:31.781-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:31.781-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:31.961-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test1624252210]
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_status_test1624252210/multigres.yaml provisioner=local
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:31.962-07:00 level=INFO msg="sleeping an extra 49.976541ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:32.013-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:32.014-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:32.014-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:32.014-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:32.029-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:32.029-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:32.029-07:00 level=INFO msg="Admin server starting up" port=12237 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:32.030-07:00 level=INFO msg="Admin server started" address=localhost:12237
+time=2025-09-05T16:34:32.030-07:00 level=INFO msg="Admin server starting" port=12237
+time=2025-09-05T16:34:32.030-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:32.030-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:32.219-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test2139478676]
+time=2025-09-05T16:34:32.220-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test2139478676/multigres.yaml provisioner=local
+time=2025-09-05T16:34:32.220-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test3719794525]
+time=2025-09-05T16:34:32.221-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test3719794525/multigres.yaml provisioner=local
+time=2025-09-05T16:34:32.221-07:00 level=INFO msg="InitCluster called" provisioner=local config_paths=[/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test964678296]
+time=2025-09-05T16:34:32.221-07:00 level=INFO msg="Created configuration file" path=/var/folders/9w/shgzwzq94lg0kmmymwtrp0200000gn/T/grpc_list_test964678296/multigres.yaml provisioner=local
+time=2025-09-05T16:34:32.222-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:32.222-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:32.222-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:32.223-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:32.223-07:00 level=INFO msg="sleeping an extra 49.955334ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:32.274-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:32.274-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:32.274-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:32.274-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-05T16:34:32.293-07:00 level=INFO msg="Using fully qualified hostname for service URL" hostname=localhost
+time=2025-09-05T16:34:32.293-07:00 level=INFO msg="GRPC is not enabled (no grpc-port or socket-file set), skipping gRPC server creation"
+time=2025-09-05T16:34:32.293-07:00 level=INFO msg="Admin server starting up" port=12238 log_file=/Users/deepthi/github/multigres/go/cmd/multigres/command/cluster/multigres-admin.log
+time=2025-09-05T16:34:32.294-07:00 level=INFO msg="Admin server started" address=localhost:12238
+time=2025-09-05T16:34:32.294-07:00 level=INFO msg="Admin server starting" port=12238
+time=2025-09-05T16:34:32.294-07:00 level=INFO msg="Listening for HTTP calls on port" httpPort=0
+time=2025-09-05T16:34:32.294-07:00 level=INFO msg="service successfully started" port=0
+time=2025-09-05T16:34:32.432-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-05T16:34:32.432-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-05T16:34:32.432-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-05T16:34:32.432-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-05T16:34:32.432-07:00 level=INFO msg="sleeping an extra 49.858291ms after OnTermSync to finish lameduck period"
+time=2025-09-05T16:34:32.483-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-05T16:34:32.483-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-05T16:34:32.483-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-05T16:34:32.483-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="entering lameduck mode" period=50ms
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="firing asynchronous OnTerm hooks"
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnTermSync timeout=10s
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-08T09:11:09.777-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-08T09:11:09.778-07:00 level=INFO msg="sleeping an extra 49.50475ms after OnTermSync to finish lameduck period"
+time=2025-09-08T09:11:09.778-07:00 level=INFO msg="sleeping an extra 49.480917ms after OnTermSync to finish lameduck period"
+time=2025-09-08T09:11:09.778-07:00 level=INFO msg="OnTermSync hooks finished"
+time=2025-09-08T09:11:09.778-07:00 level=INFO msg="sleeping an extra 49.364792ms after OnTermSync to finish lameduck period"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="shutting down gracefully"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Shutdown signal received, stopping server"
+time=2025-09-08T09:11:09.827-07:00 level=INFO msg="Firing hooks and waiting for them" name=OnClose timeout=10s
+time=2025-09-08T09:11:09.828-07:00 level=INFO msg="Admin server shutting down"
+time=2025-09-08T09:11:09.828-07:00 level=INFO msg="Shutdown signal received, stopping server"

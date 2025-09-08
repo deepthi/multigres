@@ -1,0 +1,219 @@
+// Copyright 2025 The Multigres Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package multigres.admin.v1;
+
+option go_package = "github.com/multigres/multigres/go/pb/adminservice";
+
+// AdminService provides gRPC API for managing Multigres clusters
+service AdminService {
+  // InitCluster creates a new cluster configuration
+  rpc InitCluster(InitClusterRequest) returns (InitClusterResponse);
+  
+  // StartCluster starts a cluster using existing configuration
+  rpc StartCluster(StartClusterRequest) returns (stream StartClusterResponse);
+  
+  // StopCluster stops a running cluster
+  rpc StopCluster(StopClusterRequest) returns (StopClusterResponse);
+  
+  // GetClusterStatus returns the current status of a cluster
+  rpc GetClusterStatus(GetClusterStatusRequest) returns (GetClusterStatusResponse);
+  
+  // ListClusters returns information about all known clusters
+  rpc ListClusters(ListClustersRequest) returns (ListClustersResponse);
+  
+  // Shutdown gracefully shuts down the admin server
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+// InitClusterRequest contains parameters for initializing a cluster
+message InitClusterRequest {
+  // config_paths specifies directories to search for/create config files
+  repeated string config_paths = 1;
+  // provisioner specifies which provisioner to use (e.g., "local")
+  string provisioner = 2;
+  // provisioner_config contains provisioner-specific configuration
+  map<string, string> provisioner_config = 3;
+}
+
+// InitClusterResponse contains the result of cluster initialization
+message InitClusterResponse {
+  // config_file_path is the path to the created configuration file
+  string config_file_path = 1;
+  // cluster_id is the unique identifier for the cluster
+  string cluster_id = 2;
+}
+
+// StartClusterRequest contains parameters for starting a cluster
+message StartClusterRequest {
+  // config_paths specifies directories to search for config files
+  repeated string config_paths = 1;
+  // cluster_id optionally specifies which cluster to start (if managing multiple)
+  string cluster_id = 2;
+}
+
+// StartClusterResponse contains streaming updates during cluster startup
+message StartClusterResponse {
+  // event_type indicates the type of startup event
+  StartEventType event_type = 1;
+  // message contains human-readable status message
+  string message = 2;
+  // service contains information about a provisioned service
+  ServiceInfo service = 3;
+  // error contains error details if event_type is ERROR
+  string error = 4;
+}
+
+// StartEventType enumerates the types of events during cluster startup
+enum StartEventType {
+  START_EVENT_TYPE_UNSPECIFIED = 0;
+  START_EVENT_TYPE_STARTING = 1;
+  START_EVENT_TYPE_SERVICE_PROVISIONED = 2;
+  START_EVENT_TYPE_COMPLETED = 3;
+  START_EVENT_TYPE_ERROR = 4;
+}
+
+// StopClusterRequest contains parameters for stopping a cluster
+message StopClusterRequest {
+  // config_paths specifies directories to search for config files
+  repeated string config_paths = 1;
+  // cluster_id optionally specifies which cluster to stop
+  string cluster_id = 2;
+  // clean indicates whether to remove all cluster data
+  bool clean = 3;
+}
+
+// StopClusterResponse contains the result of stopping a cluster
+message StopClusterResponse {
+  // message contains human-readable status message
+  string message = 1;
+  // services_stopped lists the services that were stopped
+  repeated string services_stopped = 2;
+}
+
+// GetClusterStatusRequest contains parameters for getting cluster status
+message GetClusterStatusRequest {
+  // config_paths specifies directories to search for config files
+  repeated string config_paths = 1;
+  // cluster_id optionally specifies which cluster to check
+  string cluster_id = 2;
+}
+
+// GetClusterStatusResponse contains the current cluster status
+message GetClusterStatusResponse {
+  // cluster_id is the unique identifier for the cluster
+  string cluster_id = 1;
+  // status indicates the overall cluster status
+  ClusterStatus status = 2;
+  // services contains status information for each service
+  repeated ServiceStatus services = 3;
+  // message contains additional status information
+  string message = 4;
+}
+
+// ListClustersRequest contains parameters for listing clusters
+message ListClustersRequest {
+  // config_paths specifies directories to search for config files
+  repeated string config_paths = 1;
+}
+
+// ListClustersResponse contains information about all known clusters
+message ListClustersResponse {
+  // clusters contains information about each cluster
+  repeated ClusterInfo clusters = 1;
+}
+
+// ClusterStatus enumerates possible cluster states
+enum ClusterStatus {
+  CLUSTER_STATUS_UNSPECIFIED = 0;
+  CLUSTER_STATUS_STOPPED = 1;
+  CLUSTER_STATUS_STARTING = 2;
+  CLUSTER_STATUS_RUNNING = 3;
+  CLUSTER_STATUS_STOPPING = 4;
+  CLUSTER_STATUS_ERROR = 5;
+}
+
+// ClusterInfo contains basic information about a cluster
+message ClusterInfo {
+  // cluster_id is the unique identifier for the cluster
+  string cluster_id = 1;
+  // name is the human-readable name of the cluster
+  string name = 2;
+  // provisioner indicates which provisioner manages this cluster
+  string provisioner = 3;
+  // status indicates the current cluster status
+  ClusterStatus status = 4;
+  // config_file_path is the path to the cluster's configuration file
+  string config_file_path = 5;
+}
+
+// ServiceInfo contains information about a provisioned service
+message ServiceInfo {
+  // name is the name of the service (e.g., "etcd", "multigateway")
+  string name = 1;
+  // service_id is the unique identifier for this service instance
+  string service_id = 2;
+  // fqdn is the fully qualified domain name where the service is accessible
+  string fqdn = 3;
+  // ports maps port names to their numbers (e.g., "grpc" -> 2379)
+  map<string, int32> ports = 4;
+  // metadata contains additional service-specific information
+  map<string, string> metadata = 5;
+}
+
+// ServiceStatus contains status information for a service
+message ServiceStatus {
+  // service_info contains basic service information
+  ServiceInfo service_info = 1;
+  // status indicates whether the service is running
+  ServiceState status = 2;
+  // health indicates the health of the service
+  HealthStatus health = 3;
+  // last_check_time is when the status was last updated (Unix timestamp)
+  int64 last_check_time = 4;
+  // error_message contains error details if status is ERROR
+  string error_message = 5;
+}
+
+// ServiceState enumerates possible service states
+enum ServiceState {
+  SERVICE_STATE_UNSPECIFIED = 0;
+  SERVICE_STATE_STOPPED = 1;
+  SERVICE_STATE_STARTING = 2;
+  SERVICE_STATE_RUNNING = 3;
+  SERVICE_STATE_STOPPING = 4;
+  SERVICE_STATE_ERROR = 5;
+}
+
+// HealthStatus enumerates possible health states
+enum HealthStatus {
+  HEALTH_STATUS_UNSPECIFIED = 0;
+  HEALTH_STATUS_HEALTHY = 1;
+  HEALTH_STATUS_UNHEALTHY = 2;
+  HEALTH_STATUS_UNKNOWN = 3;
+}
+
+// ShutdownRequest contains parameters for shutting down the admin server
+message ShutdownRequest {
+  // force indicates whether to force shutdown even if clusters are running
+  bool force = 1;
+}
+
+// ShutdownResponse contains the result of the shutdown request
+message ShutdownResponse {
+  // message contains a confirmation message
+  string message = 1;
+}

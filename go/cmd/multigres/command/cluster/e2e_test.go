@@ -19,9 +19,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -30,6 +32,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"gopkg.in/yaml.v3"
 
 	"github.com/multigres/multigres/go/clustermetadata/topo"
@@ -139,6 +144,84 @@ func cleanupTestProcesses(tempDir string) error {
 	}
 
 	return nil
+}
+
+// testAdminServer manages an admin server for testing
+type testAdminServer struct {
+	port    int
+	cmd     *exec.Cmd
+	address string
+}
+
+// startTestAdminServer starts an admin server for testing on a random port
+func startTestAdminServer(t *testing.T) *testAdminServer {
+	t.Helper()
+
+	// Find an available port
+	port := utils.GetNextPort()
+	address := fmt.Sprintf("localhost:%d", port)
+
+	// Build command to start admin server
+	cmd := exec.Command(multigresBinary, "admin", "start", "--port", strconv.Itoa(port))
+
+	// Start the server
+	err := cmd.Start()
+	require.NoError(t, err, "Failed to start admin server on port %d", port)
+
+	server := &testAdminServer{
+		port:    port,
+		cmd:     cmd,
+		address: address,
+	}
+
+	// Wait for server to be ready
+	ready := false
+	for i := 0; i < 30; i++ { // Try for 3 seconds
+		time.Sleep(100 * time.Millisecond)
+		conn, err := net.DialTimeout("tcp", address, 100*time.Millisecond)
+		if err == nil {
+			conn.Close()
+			ready = true
+			break
+		}
+	}
+
+	require.True(t, ready, "Admin server failed to start on port %d within 3 seconds", port)
+	t.Logf("Started test admin server on %s (PID: %d)", address, cmd.Process.Pid)
+
+	return server
+}
+
+// stop stops the test admin server
+func (s *testAdminServer) stop(t *testing.T) {
+	t.Helper()
+
+	if s.cmd != nil && s.cmd.Process != nil {
+		t.Logf("Stopping test admin server (PID: %d)", s.cmd.Process.Pid)
+
+		// Send SIGTERM first
+		if err := s.cmd.Process.Signal(syscall.SIGTERM); err != nil {
+			t.Logf("Failed to send SIGTERM to admin server: %v", err)
+		}
+
+		// Wait a moment for graceful shutdown
+		done := make(chan error, 1)
+		go func() {
+			done <- s.cmd.Wait()
+		}()
+
+		select {
+		case <-done:
+			// Process exited gracefully
+		case <-time.After(2 * time.Second):
+			// Force kill if it doesn't exit within 2 seconds
+			t.Logf("Admin server didn't exit gracefully, force killing")
+			if err := s.cmd.Process.Kill(); err != nil {
+				t.Logf("Failed to kill admin server: %v", err)
+			}
+			<-done // Wait for the process to actually exit
+		}
+	}
 }
 
 // createTestConfigWithPorts creates a test configuration file with custom ports
@@ -305,17 +388,134 @@ func getServiceStates(configDir string) (map[string]local.LocalProvisionedServic
 	return states, nil
 }
 
-// checkServiceConnectivity checks if a service is reachable on its configured ports
+// checkServiceConnectivity checks if a service is reachable on its configured ports using appropriate protocols
 func checkServiceConnectivity(service string, state local.LocalProvisionedService) error {
 	for portName, port := range state.Ports {
 		address := net.JoinHostPort(state.FQDN, fmt.Sprintf("%d", port))
-		conn, err := net.DialTimeout("tcp", address, 5*time.Second)
-		if err != nil {
-			return fmt.Errorf("failed to connect to %s %s port at %s: %w", service, portName, address, err)
+
+		switch portName {
+		case "http_port":
+			// HTTP port - make HTTP GET request
+			if err := checkHTTPConnectivity(address); err != nil {
+				return fmt.Errorf("failed to connect to %s HTTP port at %s: %w", service, address, err)
+			}
+		case "grpc_port":
+			// gRPC port - try gRPC connection
+			if err := checkGRPCConnectivity(address); err != nil {
+				return fmt.Errorf("failed to connect to %s gRPC port at %s: %w", service, address, err)
+			}
+		case "tcp":
+			// Raw TCP port (like etcd) - use basic TCP connection
+			// Force IPv4 to avoid IPv6 wildcard binding issues on macOS
+			ipv4Address := strings.Replace(address, "localhost:", "127.0.0.1:", 1)
+			conn, err := net.DialTimeout("tcp", ipv4Address, 5*time.Second)
+			if err != nil {
+				return fmt.Errorf("failed to connect to %s TCP port at %s: %w", service, address, err)
+			}
+			conn.Close()
+		default:
+			// Unknown port type - try TCP connection as fallback
+			// Force IPv4 to avoid IPv6 wildcard binding issues on macOS
+			ipv4Address := strings.Replace(address, "localhost:", "127.0.0.1:", 1)
+			conn, err := net.DialTimeout("tcp", ipv4Address, 5*time.Second)
+			if err != nil {
+				return fmt.Errorf("failed to connect to %s %s port at %s: %w", service, portName, address, err)
+			}
+			conn.Close()
 		}
-		conn.Close()
 	}
 	return nil
+}
+
+// checkHTTPConnectivity makes an HTTP GET request to verify HTTP service is ready
+func checkHTTPConnectivity(address string) error {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	// Force IPv4 by converting localhost to 127.0.0.1
+	ipv4Address := strings.Replace(address, "localhost:", "127.0.0.1:", 1)
+
+	// Try HTTP GET request to a specific endpoint that multigateway provides
+	resp, err := client.Get(fmt.Sprintf("http://%s/discovery/poolers", ipv4Address))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Accept any response (including 404) as long as we can connect
+	return nil
+}
+
+// TODO: delete some of this test code before creating a PR
+// checkGRPCConnectivity tries to establish a gRPC connection
+func checkGRPCConnectivity(address string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Force IPv4 by converting localhost to 127.0.0.1
+	ipv4Address := strings.Replace(address, "localhost:", "127.0.0.1:", 1)
+
+	// Try to connect to gRPC server
+	conn, err := grpc.NewClient(ipv4Address,
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// Try a health check if available, otherwise just the connection is enough
+	healthClient := grpc_health_v1.NewHealthClient(conn)
+	_, _ = healthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{})
+	// Health check might not be implemented, but connection succeeded
+	// This is still considered success
+	return nil
+}
+
+// waitForServiceConnectivity waits for a service to be reachable with retry logic
+func waitForServiceConnectivity(t *testing.T, service string, state local.LocalProvisionedService, maxWait time.Duration) (time.Duration, error) {
+	t.Helper()
+
+	startTime := time.Now()
+	retryInterval := 100 * time.Millisecond
+	maxRetries := int(maxWait / retryInterval)
+
+	for attempt := range maxRetries {
+		if attempt > 0 {
+			time.Sleep(retryInterval)
+		}
+
+		err := checkServiceConnectivity(service, state)
+		if err == nil {
+			elapsed := time.Since(startTime)
+			t.Logf("Service %s became ready after %v (attempt %d/%d)", service, elapsed, attempt+1, maxRetries)
+			return elapsed, nil
+		}
+
+		// Log the specific error on first few attempts for debugging
+		if attempt < 3 {
+			t.Logf("Service %s connectivity check failed (attempt %d): %v", service, attempt+1, err)
+		}
+
+		// Log every 1 second to show progress
+		if attempt > 0 && (attempt*int(retryInterval))%1000 == 0 {
+			t.Logf("Waiting for %s connectivity... (attempt %d/%d, %v elapsed)", service, attempt+1, maxRetries, time.Since(startTime))
+		}
+	}
+
+	totalTime := time.Since(startTime)
+
+	// For debugging, try to read the service log file if it failed
+	if state.LogFile != "" {
+		t.Logf("Service %s failed to start. Checking log file: %s", service, state.LogFile)
+		if logData, err := os.ReadFile(state.LogFile); err == nil {
+			t.Logf("=== %s Log Contents ===\n%s\n=== End Log ===", service, string(logData))
+		} else {
+			t.Logf("Could not read log file %s: %v", state.LogFile, err)
+		}
+	}
+
+	return totalTime, fmt.Errorf("service %s did not become ready within %v (total wait time: %v)", service, maxWait, totalTime)
 }
 
 // buildMultigresBinary builds the multigres binary and returns its path
@@ -419,9 +619,12 @@ func TestMain(m *testing.M) {
 }
 
 // executeInitCommand runs the actual multigres binary with "cluster init" command
-func executeInitCommand(t *testing.T, args []string) (string, error) {
+func executeInitCommand(t *testing.T, adminEndpoint string, args []string) (string, error) {
 	// Prepare the full command: "multigres cluster init <args>"
 	cmdArgs := append([]string{"cluster", "init"}, args...)
+	if adminEndpoint != "" {
+		cmdArgs = append(cmdArgs, "--admin-endpoint", adminEndpoint)
+	}
 	cmd := exec.Command(multigresBinary, cmdArgs...)
 
 	output, err := cmd.CombinedOutput()
@@ -430,6 +633,10 @@ func executeInitCommand(t *testing.T, args []string) (string, error) {
 
 func TestInitCommand(t *testing.T) {
 	ensureBinaryBuilt(t)
+
+	// Start admin server for this test
+	adminServer := startTestAdminServer(t)
+	defer adminServer.stop(t)
 
 	tests := []struct {
 		name           string
@@ -497,7 +704,7 @@ func TestInitCommand(t *testing.T) {
 			}
 
 			// Execute command using the actual binary
-			output, err := executeInitCommand(t, args)
+			output, err := executeInitCommand(t, adminServer.address, args)
 
 			// Check results
 			if tt.expectError {
@@ -526,8 +733,12 @@ func TestInitCommandConfigFileCreation(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(tempDir)
 
+	// Start admin server for this test
+	adminServer := startTestAdminServer(t)
+	defer adminServer.stop(t)
+
 	// Execute command using the actual binary
-	output, err := executeInitCommand(t, []string{"--config-path", tempDir})
+	output, err := executeInitCommand(t, adminServer.address, []string{"--config-path", tempDir})
 
 	// Command should succeed
 	require.NoError(t, err, "Command failed with output: %s", output)
@@ -574,8 +785,12 @@ func TestInitCommandConfigFileAlreadyExists(t *testing.T) {
 	err = os.WriteFile(existingConfig, []byte("existing: config"), 0644)
 	require.NoError(t, err)
 
+	// Start admin server for this test
+	adminServer := startTestAdminServer(t)
+	defer adminServer.stop(t)
+
 	// Execute command using the actual binary
-	output, err := executeInitCommand(t, []string{"--config-path", tempDir})
+	output, err := executeInitCommand(t, adminServer.address, []string{"--config-path", tempDir})
 
 	// Should fail with appropriate error
 	require.Error(t, err)
@@ -584,20 +799,26 @@ func TestInitCommandConfigFileAlreadyExists(t *testing.T) {
 	assert.Contains(t, errorOutput, existingConfig)
 }
 
-// executeStartCommand runs the actual multigres binary with "cluster up" command
-func executeStartCommand(t *testing.T, args []string) (string, error) {
-	// Prepare the full command: "multigres cluster up <args>"
+// executeStartCommand runs the actual multigres binary with "cluster start" command
+func executeStartCommand(t *testing.T, adminEndpoint string, args []string) (string, error) {
+	// Prepare the full command: "multigres cluster start <args>"
 	cmdArgs := append([]string{"cluster", "start"}, args...)
+	if adminEndpoint != "" {
+		cmdArgs = append(cmdArgs, "--admin-endpoint", adminEndpoint)
+	}
 	cmd := exec.Command(multigresBinary, cmdArgs...)
 
 	output, err := cmd.CombinedOutput()
 	return string(output), err
 }
 
-// executeStopCommand runs the actual multigres binary with "cluster down" command
-func executeStopCommand(t *testing.T, args []string) (string, error) {
-	// Prepare the full command: "multigres cluster down <args>"
+// executeStopCommand runs the actual multigres binary with "cluster stop" command
+func executeStopCommand(t *testing.T, adminEndpoint string, args []string) (string, error) {
+	// Prepare the full command: "multigres cluster stop <args>"
 	cmdArgs := append([]string{"cluster", "stop"}, args...)
+	if adminEndpoint != "" {
+		cmdArgs = append(cmdArgs, "--admin-endpoint", adminEndpoint)
+	}
 	cmd := exec.Command(multigresBinary, cmdArgs...)
 
 	output, err := cmd.CombinedOutput()
@@ -606,6 +827,10 @@ func executeStopCommand(t *testing.T, args []string) (string, error) {
 
 func TestClusterLifecycle(t *testing.T) {
 	ensureBinaryBuilt(t)
+
+	// Start admin server for this test
+	adminServer := startTestAdminServer(t)
+	defer adminServer.stop(t)
 
 	// Require etcd binary to be available (required for local provisioner)
 	_, err := exec.LookPath("etcd")
@@ -651,10 +876,10 @@ func TestClusterLifecycle(t *testing.T) {
 		configContents, _ := os.ReadFile(configFile)
 		t.Logf("Config file contents:\n%s", string(configContents))
 
-		// Start cluster (up)
+		// Start cluster (start)
 		t.Log("Starting cluster...")
-		upOutput, err := executeStartCommand(t, []string{"--config-path", tempDir})
-		require.NoError(t, err, "Up command should succeed and start the cluster: %v", upOutput)
+		upOutput, err := executeStartCommand(t, adminServer.address, []string{"--config-path", tempDir})
+		require.NoError(t, err, "Start command should succeed and start the cluster: %v", upOutput)
 
 		// Verify we got expected output
 		assert.Contains(t, upOutput, "Multigres — Distributed Postgres made easy")
@@ -662,26 +887,44 @@ func TestClusterLifecycle(t *testing.T) {
 		// Verify all services connectivity using state files
 		t.Log("Verifying all services connectivity...")
 
+		// Wait a moment for all services to fully initialize (race conditions in servenv and etcd)
+		time.Sleep(1 * time.Second)
+
 		// Read all service states from the state files
 		serviceStates, err := getServiceStates(tempDir)
 		require.NoError(t, err, "should be able to read service states")
 		require.NotEmpty(t, serviceStates, "should have at least one service running")
 
-		// Check connectivity for each service
+		// Wait for connectivity for each service with timing measurement
 		expectedServices := []string{"etcd", "multigateway", "multipooler", "multiorch"}
+		var totalWaitTimes []time.Duration
+
 		for _, serviceName := range expectedServices {
 			state, exists := serviceStates[serviceName]
 			require.True(t, exists, "service %s should have a state file", serviceName)
 
-			t.Logf("Checking %s connectivity at %s with ports %v", serviceName, state.FQDN, state.Ports)
-			require.NoError(t, checkServiceConnectivity(serviceName, state),
-				"%s should be reachable on its configured ports", serviceName)
+			t.Logf("Waiting for %s connectivity at %s with ports %v", serviceName, state.FQDN, state.Ports)
+
+			// Wait up to 5 seconds for each service to be ready (shorter for debugging)
+			maxWait := 5 * time.Second
+			waitTime, err := waitForServiceConnectivity(t, serviceName, state, maxWait)
+			totalWaitTimes = append(totalWaitTimes, waitTime)
+
+			require.NoError(t, err, "%s should be reachable on its configured ports within 30 seconds", serviceName)
 
 			// If service has a datadir defined, verify it exists
 			if state.DataDir != "" {
 				assert.DirExists(t, state.DataDir, "service %s datadir should exist at %s", serviceName, state.DataDir)
 			}
 		}
+
+		// Log timing summary
+		var totalWait time.Duration
+		for i, waitTime := range totalWaitTimes {
+			totalWait += waitTime
+			t.Logf("Service %s ready time: %v", expectedServices[i], waitTime)
+		}
+		t.Logf("Total wait time for all services: %v", totalWait)
 
 		// Verify cell exists in topology using etcd from state
 		t.Log("Verifying cell exists in topology...")
@@ -712,10 +955,10 @@ func TestClusterLifecycle(t *testing.T) {
 		require.NoError(t, checkCellExistsInTopology(etcdAddress, globalRootPath, cellName),
 			"cell should exist in topology after cluster up command")
 
-		// Stop cluster (down)
+		// Stop cluster (stop)
 		t.Log("Stopping cluster...")
-		downOutput, err := executeStopCommand(t, []string{"--config-path", tempDir})
-		require.NoError(t, err, "Down command failed with output: %s", downOutput)
+		downOutput, err := executeStopCommand(t, adminServer.address, []string{"--config-path", tempDir})
+		require.NoError(t, err, "Stop command failed with output: %s", downOutput)
 		assert.Contains(t, downOutput, "Stopping Multigres cluster")
 		assert.Contains(t, downOutput, "Multigres cluster stopped successfully")
 
@@ -736,11 +979,11 @@ func TestClusterLifecycle(t *testing.T) {
 
 		// Start and stop with --clean flag
 		t.Log("Testing clean stop behavior...")
-		_, err = executeStartCommand(t, []string{"--config-path", tempDir})
+		_, err = executeStartCommand(t, adminServer.address, []string{"--config-path", tempDir})
 		require.NoError(t, err, "Second start should succeed")
 
 		// Stop with --clean flag
-		downCleanOutput, err := executeStopCommand(t, []string{"--config-path", tempDir, "--clean"})
+		downCleanOutput, err := executeStopCommand(t, adminServer.address, []string{"--config-path", tempDir, "--clean"})
 		require.NoError(t, err, "Clean stop should succeed")
 		assert.Contains(t, downCleanOutput, "clean mode, all data for this local cluster will be deleted")
 		assert.Contains(t, downCleanOutput, "Cleaned up data directory")

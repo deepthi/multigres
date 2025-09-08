@@ -18,108 +18,28 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
-	"github.com/multigres/multigres/go/provisioner"
+	"github.com/multigres/multigres/go/cmd/multigres/internal/adminclient"
+	adminpb "github.com/multigres/multigres/go/pb/adminservice"
 	"github.com/multigres/multigres/go/servenv"
 
 	"github.com/spf13/cobra"
 )
 
-// ServiceInfo holds information about a provisioned service
-type ServiceInfo struct {
-	Name    string
-	FQDN    string
-	Ports   map[string]int
-	LogFile string
-}
-
-// ServiceSummary holds all provisioned services
-type ServiceSummary struct {
-	Services []ServiceInfo
-}
-
-// AddService adds a service to the summary
-func (s *ServiceSummary) AddService(name string, result *provisioner.ProvisionResult) {
-	// Extract log file path from metadata if available
-	logFile := ""
-	if result.Metadata != nil {
-		if logPath, ok := result.Metadata["log_file"].(string); ok {
-			logFile = logPath
-		}
-	}
-
-	s.Services = append(s.Services, ServiceInfo{
-		Name:    name,
-		FQDN:    result.FQDN,
-		Ports:   result.Ports,
-		LogFile: logFile,
-	})
-}
-
-// PrintSummary prints a formatted summary of all provisioned services
-func (s *ServiceSummary) PrintSummary() {
-	fmt.Println(strings.Repeat("=", 65))
-	fmt.Println("🎉 - Multigres cluster started successfully!")
-	fmt.Println(strings.Repeat("=", 65))
-	fmt.Println()
-	fmt.Println("Provisioned Services")
-	fmt.Println("--------------------")
-	fmt.Println()
-
-	for _, service := range s.Services {
-		fmt.Printf("%s\n", service.Name)
-		fmt.Printf("   Host: %s\n", service.FQDN)
-
-		if len(service.Ports) == 1 {
-			// Single port format
-			for portName, portNum := range service.Ports {
-				if portName == "http_port" {
-					fmt.Printf("   Port: %d → http://%s:%d\n", portNum, service.FQDN, portNum)
-				} else {
-					fmt.Printf("   Port: %d\n", portNum)
-				}
-			}
-		} else if len(service.Ports) > 1 {
-			// Multiple ports format
-			fmt.Printf("   Ports:\n")
-			for portName, portNum := range service.Ports {
-				displayPortName := strings.ToUpper(strings.Replace(portName, "_port", "", 1))
-				if portName == "http_port" {
-					fmt.Printf("     - %s: %d → http://%s:%d\n", displayPortName, portNum, service.FQDN, portNum)
-				} else {
-					fmt.Printf("     - %s: %d\n", displayPortName, portNum)
-				}
-			}
-		}
-
-		if service.LogFile != "" {
-			fmt.Printf("   Log: %s\n", service.LogFile)
-		}
-		fmt.Println()
-	}
-
-	fmt.Println(strings.Repeat("=", 65))
-	fmt.Println("✨ - Next steps:")
-
-	// Find services with HTTP ports and add direct links
-	for _, service := range s.Services {
-		if httpPort, exists := service.Ports["http_port"]; exists {
-			url := fmt.Sprintf("http://%s:%d", service.FQDN, httpPort)
-			fmt.Printf("- Open %s in your browser: %s\n", service.Name, url)
-		}
-	}
-	fmt.Println("- 🐘 Connect to PostgreSQL via Multigateway: TODO")
-	fmt.Println("- 🛑 Run \"multigres cluster stop\" to stop the cluster")
-	fmt.Println(strings.Repeat("=", 65))
-}
-
-// start handles the cluster up command
+// start handles the starting of a multigres cluster
 func start(cmd *cobra.Command, args []string) error {
 	servenv.FireRunHooks()
 
 	fmt.Println("Multigres — Distributed Postgres made easy")
 	fmt.Println("=================================================================")
 	fmt.Println("✨ Bootstrapping your local Multigres cluster — this may take a few moments ✨")
+
+	// Get admin server endpoint
+	adminEndpoint, err := cmd.Flags().GetString("admin-endpoint")
+	if err != nil {
+		return fmt.Errorf("failed to get admin-endpoint flag: %w", err)
+	}
 
 	// Get config paths from flags
 	configPaths, err := cmd.Flags().GetStringSlice("config-path")
@@ -130,51 +50,106 @@ func start(cmd *cobra.Command, args []string) error {
 		configPaths = []string{"."}
 	}
 
-	// Load configuration to determine provisioner type
-	config, configFile, err := LoadConfig(configPaths)
+	// Create admin client
+	client, err := adminclient.NewClient(adminEndpoint)
 	if err != nil {
-		return fmt.Errorf("failed to load configuration: %w", err)
+		return fmt.Errorf("failed to connect to admin server at %s: %w", adminEndpoint, err)
 	}
+	defer client.Close()
 
-	fmt.Println("📄 - Config loaded from: " + configFile)
+	// Track services for final summary
+	var services []*adminpb.ServiceInfo
 
-	// Create provisioner instance
-	p, err := provisioner.GetProvisioner(config.Provisioner)
+	// Start cluster with streaming updates
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	err = client.StartCluster(ctx, configPaths, "", func(resp *adminpb.StartClusterResponse) error {
+		switch resp.EventType {
+		case adminpb.StartEventType_START_EVENT_TYPE_STARTING:
+			fmt.Printf("📡 %s\n", resp.Message)
+
+		case adminpb.StartEventType_START_EVENT_TYPE_SERVICE_PROVISIONED:
+			fmt.Printf("✅ %s\n", resp.Message)
+			if resp.Service != nil {
+				services = append(services, resp.Service)
+			}
+
+		case adminpb.StartEventType_START_EVENT_TYPE_COMPLETED:
+			fmt.Printf("🎉 %s\n", resp.Message)
+
+		case adminpb.StartEventType_START_EVENT_TYPE_ERROR:
+			return fmt.Errorf("cluster start failed: %s", resp.Error)
+		}
+		return nil
+	})
+
 	if err != nil {
-		return fmt.Errorf("failed to create provisioner '%s': %w", config.Provisioner, err)
+		return fmt.Errorf("failed to start cluster: %w", err)
 	}
 
-	// Let provisioner load its own configuration
-	if err := p.LoadConfig(configPaths); err != nil {
-		return fmt.Errorf("failed to load provisioner config: %w", err)
-	}
+	// Print service summary
+	printServiceSummary(services)
 
-	fmt.Println("🛠️  - Provisioner: " + p.Name())
-	fmt.Println()
-	fmt.Println("👋 Here we go! Starting core services...")
+	return nil
+}
+
+// printServiceSummary prints a summary of the provisioned services
+func printServiceSummary(services []*adminpb.ServiceInfo) {
+	fmt.Println(strings.Repeat("=", 65))
+	fmt.Println("🎉 - Multigres cluster started successfully!")
 	fmt.Println(strings.Repeat("=", 65))
 	fmt.Println()
-
-	ctx := context.Background()
-
-	// Initialize service summary to track all provisioned services
-	summary := &ServiceSummary{}
-
-	// Use the provisioner's Bootstrap method to provision all services
-	allResults, err := p.Bootstrap(ctx)
-	if err != nil {
-		return fmt.Errorf("cluster bootstrap failed: %w", err)
-	}
-
-	// Add all returned services to summary dynamically
-	for _, result := range allResults {
-		summary.AddService(result.ServiceName, result)
-	}
-
-	// Print comprehensive summary
+	fmt.Println("Provisioned Services")
+	fmt.Println("--------------------")
 	fmt.Println()
-	summary.PrintSummary()
-	return nil
+
+	for _, service := range services {
+		fmt.Printf("%s\n", service.Name)
+		fmt.Printf("   Host: %s\n", service.Fqdn)
+
+		if len(service.Ports) == 1 {
+			// Single port format
+			for portName, portNum := range service.Ports {
+				if portName == "http_port" {
+					fmt.Printf("   Port: %d → http://%s:%d\n", portNum, service.Fqdn, portNum)
+				} else {
+					fmt.Printf("   Port: %d\n", portNum)
+				}
+			}
+		} else if len(service.Ports) > 1 {
+			// Multiple ports format
+			fmt.Printf("   Ports:\n")
+			for portName, portNum := range service.Ports {
+				displayPortName := strings.ToUpper(strings.Replace(portName, "_port", "", 1))
+				if portName == "http_port" {
+					fmt.Printf("     - %s: %d → http://%s:%d\n", displayPortName, portNum, service.Fqdn, portNum)
+				} else {
+					fmt.Printf("     - %s: %d\n", displayPortName, portNum)
+				}
+			}
+		}
+
+		if logFile, ok := service.Metadata["log_file"]; ok {
+			fmt.Printf("   Log: %s\n", logFile)
+		}
+		fmt.Println()
+	}
+
+	fmt.Println(strings.Repeat("=", 65))
+	fmt.Println("✨ - Next steps:")
+
+	// Find services with HTTP ports and add direct links
+	for _, service := range services {
+		if httpPort, exists := service.Ports["http_port"]; exists {
+			url := fmt.Sprintf("http://%s:%d", service.Fqdn, httpPort)
+			fmt.Printf("- Open %s in your browser: %s\n", service.Name, url)
+		}
+	}
+
+	fmt.Println("- Check cluster status: multigres cluster status")
+	fmt.Println("- Stop cluster: multigres cluster stop")
+	fmt.Println(strings.Repeat("=", 65))
 }
 
 var StartCommand = &cobra.Command{
@@ -185,5 +160,5 @@ var StartCommand = &cobra.Command{
 }
 
 func init() {
-	// No additional flags needed - config-path is provided by viperutil via root command
+	StartCommand.Flags().String("admin-endpoint", "localhost:15990", "Admin server endpoint")
 }
