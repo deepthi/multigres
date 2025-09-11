@@ -21,11 +21,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	multiadminpb "github.com/multigres/multigres/go/pb/multiadmin"
+
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-
-	multiadminpb "github.com/multigres/multigres/go/pb/multiadmin"
 )
 
 // runGetCellNames handles the getcellnames command
@@ -37,7 +37,7 @@ func runGetCellNames(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create gRPC connection
-	conn, err := grpc.NewClient(adminServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(adminServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return fmt.Errorf("failed to connect to admin server %s: %w", adminServer, err)
 	}
