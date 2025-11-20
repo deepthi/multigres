@@ -206,6 +206,42 @@ func TestSelectCandidate(t *testing.T) {
 		require.Equal(t, "mp1", candidate.ID.Name)
 	})
 
+	t.Run("success - selects node with highest LSN across segments (multi-digit)", func(t *testing.T) {
+		fakeClient := rpcclient.NewFakeClient()
+
+		// Create nodes with LSNs where lexicographic comparison would be wrong
+		// Lexicographic: "9/9000000" > "10/1000000" (WRONG! '9' > '1')
+		// Numeric: "10/1000000" > "9/9000000" (CORRECT! 10 > 9)
+		cohort := []*Node{
+			createMockNode(fakeClient, "mp1", 5, "9/9000000", true, "standby"),  // Segment 9
+			createMockNode(fakeClient, "mp2", 5, "10/1000000", true, "standby"), // Segment 10 (highest)
+			createMockNode(fakeClient, "mp3", 5, "8/5000000", true, "standby"),  // Segment 8
+		}
+
+		candidate, err := c.selectCandidate(ctx, cohort)
+		require.NoError(t, err)
+
+		// Should select mp2 (segment 10) not mp1 (segment 9)
+		require.Equal(t, "mp2", candidate.ID.Name,
+			"Should select node with highest LSN using numeric comparison, not lexicographic")
+	})
+
+	t.Run("success - handles invalid LSN gracefully", func(t *testing.T) {
+		fakeClient := rpcclient.NewFakeClient()
+
+		cohort := []*Node{
+			createMockNode(fakeClient, "mp1", 5, "0/3000000", true, "standby"),
+			createMockNode(fakeClient, "mp2", 5, "invalid-lsn", true, "standby"),
+			createMockNode(fakeClient, "mp3", 5, "0/1000000", true, "standby"),
+		}
+
+		candidate, err := c.selectCandidate(ctx, cohort)
+		require.NoError(t, err)
+
+		// Should select mp1, skipping the node with invalid LSN
+		require.Equal(t, "mp1", candidate.ID.Name)
+	})
+
 	t.Run("error - no nodes available", func(t *testing.T) {
 		fakeClient := rpcclient.NewFakeClient()
 

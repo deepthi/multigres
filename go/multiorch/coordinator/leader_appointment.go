@@ -20,6 +20,7 @@ import (
 	"sync"
 
 	"github.com/multigres/multigres/go/mterrors"
+	"github.com/multigres/multigres/go/multipooler/lsnutil"
 	clustermetadatapb "github.com/multigres/multigres/go/pb/clustermetadata"
 	consensusdatapb "github.com/multigres/multigres/go/pb/consensusdata"
 	mtrpcpb "github.com/multigres/multigres/go/pb/mtrpc"
@@ -184,9 +185,7 @@ func (c *Coordinator) selectCandidate(ctx context.Context, cohort []*Node) (*Nod
 			"no healthy nodes available for candidate selection")
 	}
 
-	// Select node with most advanced WAL position
-	// TODO: Implement proper LSN comparison (PostgreSQL format: X/XXXXXXXX)
-	// For now, use lexicographic comparison as a placeholder
+	// Select node with most advanced WAL position using proper LSN comparison
 	var bestCandidate *Node
 	var bestWAL string
 
@@ -195,7 +194,22 @@ func (c *Coordinator) selectCandidate(ctx context.Context, cohort []*Node) (*Nod
 			continue
 		}
 
-		if bestCandidate == nil || status.walPosition > bestWAL {
+		if bestCandidate == nil {
+			bestCandidate = status.node
+			bestWAL = status.walPosition
+			continue
+		}
+
+		isGreater, err := lsnutil.LSNGreater(status.walPosition, bestWAL)
+		if err != nil {
+			c.logger.WarnContext(ctx, "Failed to compare LSNs, skipping node",
+				"node", status.node.ID.Name,
+				"lsn", status.walPosition,
+				"error", err)
+			continue
+		}
+
+		if isGreater {
 			bestCandidate = status.node
 			bestWAL = status.walPosition
 		}
