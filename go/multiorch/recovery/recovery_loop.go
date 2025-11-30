@@ -210,10 +210,11 @@ func (re *Engine) attemptRecovery(problem analysis.Problem) {
 		return
 	}
 
-	// Acquire lock if needed
+	// Note: Locking is handled by the recovery actions themselves using
+	// topo.LockShardForRecovery(). Actions that require locking (RequiresLock() == true)
+	// acquire distributed locks internally with configurable timeout from Metadata().LockTimeout.
 	if problem.RecoveryAction.RequiresLock() {
-		// TODO: Implement shard locking
-		re.logger.DebugContext(re.ctx, "recovery action requires lock", "problem_code", problem.Code)
+		re.logger.DebugContext(re.ctx, "recovery action will acquire shard lock", "problem_code", problem.Code)
 	}
 
 	// Execute recovery action
@@ -238,14 +239,26 @@ func (re *Engine) attemptRecovery(problem analysis.Problem) {
 	// TODO: Record success in metrics
 
 	// Post-recovery refresh
-	// If we ran a shard-wide recovery, force refresh all poolers in the shard
-	// to ensure they have up-to-date state and prevent re-queueing the same problem.
+	// If we ran a shard-wide recovery, refresh shard metadata from topology first
+	// (to pick up any type changes, e.g., standbys becoming REPLICA after bootstrap),
+	// then force health check all poolers in the shard to ensure they have up-to-date state.
 	if problem.Scope == analysis.ScopeShard {
 		re.logger.InfoContext(re.ctx, "forcing refresh of all poolers post recovery",
 			"database", problem.Database,
 			"tablegroup", problem.TableGroup,
 			"shard", problem.Shard,
 		)
+		// First refresh shard metadata from topology to pick up any type changes
+		// (e.g., standbys being set to REPLICA after bootstrap via ChangeType RPC)
+		if err := re.refreshShardMetadata(context.Background(), problem.Database, problem.TableGroup, problem.Shard, nil); err != nil {
+			re.logger.WarnContext(re.ctx, "failed to refresh shard metadata post recovery",
+				"error", err,
+				"database", problem.Database,
+				"tablegroup", problem.TableGroup,
+				"shard", problem.Shard,
+			)
+		}
+		// Then force health check to update health state
 		re.forceHealthCheckShardPoolers(context.Background(), problem.Database, problem.TableGroup, problem.Shard, nil /* poolersToIgnore */)
 	}
 }
@@ -280,7 +293,7 @@ func (re *Engine) recheckProblem(problem analysis.Problem) (bool, error) {
 	if isShardWide {
 		// Shard-wide: refresh all poolers in shard except the dead one
 		var poolersToIgnore []string
-		if problem.Code == analysis.ProblemPrimaryDead {
+		if problem.Code == analysis.ProblemPrimaryIsDead {
 			poolersToIgnore = []string{poolerIDStr}
 		}
 		re.forceHealthCheckShardPoolers(ctx, problem.Database, problem.TableGroup, problem.Shard, poolersToIgnore)

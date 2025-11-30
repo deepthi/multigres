@@ -163,27 +163,53 @@ func (re *Engine) pollPooler(ctx context.Context, poolerID *clustermetadata.ID, 
 	pooler.LastSeen = timestamppb.New(successTime)
 	pooler.IsUpToDate = true
 	pooler.IsLastCheckValid = true
-	pooler.PoolerType = statusResp.Status.PoolerType
 
-	// Populate type-specific fields based on what the pooler reports
-	pooler.PrimaryStatus = statusResp.Status.PrimaryStatus
-	pooler.ReplicationStatus = statusResp.Status.ReplicationStatus
+	if statusResp.UsingInitStatus {
+		// We're using InitializationStatus response (postgres not running)
+		// NOTE: We do NOT clear PrimaryStatus/ReplicationStatus - they may contain
+		// valid data from when postgres was running, which is needed to determine
+		// IsInitialized(). The IsPostgresRunning flag is used separately to track
+		// whether postgres is currently running.
+		pooler.IsPostgresRunning = false
+		re.logger.InfoContext(ctx, "pooler poll successful (using InitializationStatus)",
+			"pooler_id", poolerIDStr,
+			"topology_type", pooler.MultiPooler.Type,
+			"is_initialized", statusResp.InitializationStatusResp.IsInitialized,
+			"postgres_running", statusResp.InitializationStatusResp.PostgresRunning,
+			"latency", time.Since(totalStart),
+		)
+	} else {
+		// We're using Status response (normal case - postgres is running)
+		pooler.IsPostgresRunning = true
+		pooler.PoolerType = statusResp.StatusResponse.Status.PoolerType
+		pooler.PrimaryStatus = statusResp.StatusResponse.Status.PrimaryStatus
+		pooler.ReplicationStatus = statusResp.StatusResponse.Status.ReplicationStatus
+
+		re.logger.DebugContext(ctx, "pooler poll successful",
+			"pooler_id", poolerIDStr,
+			"topology_type", pooler.MultiPooler.Type,
+			"reported_type", statusResp.StatusResponse.Status.PoolerType,
+			"latency", time.Since(totalStart),
+		)
+	}
 
 	re.poolerStore.Set(poolerIDStr, pooler)
+}
 
-	re.logger.DebugContext(ctx, "pooler poll successful",
-		"pooler_id", poolerIDStr,
-		"topology_type", pooler.MultiPooler.Type,
-		"reported_type", statusResp.Status.PoolerType,
-		"latency", time.Since(totalStart),
-	)
+// poolerStatusResult wraps either a Status RPC response or an InitializationStatus RPC response.
+// This allows us to handle both types in a unified way.
+type poolerStatusResult struct {
+	StatusResponse           *multipoolermanagerdatapb.StatusResponse
+	InitializationStatusResp *multipoolermanagerdatapb.InitializationStatusResponse
+	UsingInitStatus          bool // true if using InitializationStatus (fallback)
 }
 
 // pollPoolerStatus calls the Status RPC which works for both PRIMARY and REPLICA poolers.
 // The Status RPC returns unified status information that includes both primary and replication
 // status, populated based on what type the pooler believes itself to be.
+// If Status RPC fails (e.g., postgres not running), it falls back to InitializationStatus RPC.
 // Returns the status response for the caller to extract and store metrics.
-func (re *Engine) pollPoolerStatus(ctx context.Context, poolerID *clustermetadata.ID, pooler *multiorchdatapb.PoolerHealthState) (*multipoolermanagerdatapb.StatusResponse, error) {
+func (re *Engine) pollPoolerStatus(ctx context.Context, poolerID *clustermetadata.ID, pooler *multiorchdatapb.PoolerHealthState) (*poolerStatusResult, error) {
 	poolerIDStr := topo.MultiPoolerIDString(poolerID)
 
 	re.logger.DebugContext(ctx, "polling pooler status",
@@ -196,7 +222,37 @@ func (re *Engine) pollPoolerStatus(ctx context.Context, poolerID *clustermetadat
 	// Call Status RPC
 	resp, err := re.rpcClient.Status(ctx, pooler.MultiPooler, &multipoolermanagerdatapb.StatusRequest{})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get status from pooler: %w", err)
+		// Status RPC failed (likely postgres not running) - fallback to InitializationStatus
+		re.logger.InfoContext(ctx, "Status RPC failed, falling back to InitializationStatus",
+			"pooler_id", poolerIDStr,
+			"error", err,
+		)
+
+		// Call InitializationStatus RPC as fallback
+		initResp, initErr := re.rpcClient.InitializationStatus(ctx, pooler.MultiPooler, &multipoolermanagerdatapb.InitializationStatusRequest{})
+		if initErr != nil {
+			return nil, fmt.Errorf("both Status and InitializationStatus RPCs failed - Status error: %w, InitStatus error: %v", err, initErr)
+		}
+
+		// Validate InitializationStatus response
+		if initResp == nil {
+			return nil, fmt.Errorf("received nil initialization status response")
+		}
+
+		// Log initialization status information for observability
+		re.logger.InfoContext(ctx, "pooler initialization status received (fallback)",
+			"pooler_id", poolerIDStr,
+			"is_initialized", initResp.IsInitialized,
+			"has_data_directory", initResp.HasDataDirectory,
+			"postgres_running", initResp.PostgresRunning,
+			"role", initResp.Role,
+			"consensus_term", initResp.ConsensusTerm,
+		)
+
+		return &poolerStatusResult{
+			InitializationStatusResp: initResp,
+			UsingInitStatus:          true,
+		}, nil
 	}
 
 	// Validate response
@@ -212,7 +268,10 @@ func (re *Engine) pollPoolerStatus(ctx context.Context, poolerID *clustermetadat
 		"has_replication_status", resp.Status.ReplicationStatus != nil,
 	)
 
-	return resp, nil
+	return &poolerStatusResult{
+		StatusResponse:  resp,
+		UsingInitStatus: false,
+	}, nil
 }
 
 // existsInCache checks if a pooler ID was recently polled.
@@ -258,7 +317,14 @@ func (re *Engine) queuePoolersHealthCheck() {
 
 	pushedCount := 0
 
-	// Iterate over poolers using Range() to hold lock during iteration
+	// Collect poolers to queue and poolers that need IsUpToDate reset
+	var poolersToQueue []string
+	var poolersToReset []struct {
+		id   string
+		info *multiorchdatapb.PoolerHealthState
+	}
+
+	// Iterate over poolers using Range() - do NOT call Set inside Range (deadlock!)
 	re.poolerStore.Range(func(poolerID string, poolerInfo *multiorchdatapb.PoolerHealthState) bool {
 		// Skip if recently attempted (either never attempted or older than interval)
 		lastCheckAttempted := time.Time{}
@@ -269,11 +335,32 @@ func (re *Engine) queuePoolersHealthCheck() {
 			return true // continue iteration
 		}
 
-		// Push to queue for health checking
-		re.healthCheckQueue.Push(poolerID)
-		pushedCount++
+		// Collect pooler for queueing
+		poolersToQueue = append(poolersToQueue, poolerID)
+
+		// If IsUpToDate is true, collect for reset (will be done after Range completes)
+		// Without this reset, pollPooler skips if IsUpToDate && IsLastCheckValid are both true.
+		if poolerInfo.IsUpToDate {
+			poolerInfo.IsUpToDate = false
+			poolersToReset = append(poolersToReset, struct {
+				id   string
+				info *multiorchdatapb.PoolerHealthState
+			}{poolerID, poolerInfo})
+		}
+
 		return true // continue iteration
 	})
+
+	// Now safe to call Set (Range lock is released)
+	for _, p := range poolersToReset {
+		re.poolerStore.Set(p.id, p.info)
+	}
+
+	// Push collected poolers to queue
+	for _, poolerID := range poolersToQueue {
+		re.healthCheckQueue.Push(poolerID)
+		pushedCount++
+	}
 
 	if pushedCount > 0 {
 		re.logger.Debug("pushed poolers to health check queue",

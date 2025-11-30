@@ -167,15 +167,24 @@ func (g *AnalysisGenerator) generateAnalysisForPooler(
 	tableGroup string,
 	shard string,
 ) *store.ReplicationAnalysis {
+	// Determine pooler type from health check (PoolerType).
+	// Nodes are never created with topology type PRIMARY, so health check is authoritative.
+	// Fall back to topology type only if health check type is UNKNOWN.
+	poolerType := pooler.PoolerType
+	if poolerType == clustermetadatapb.PoolerType_UNKNOWN {
+		poolerType = pooler.MultiPooler.Type
+	}
+
 	analysis := &store.ReplicationAnalysis{
 		PoolerID:             pooler.MultiPooler.Id,
 		Database:             pooler.MultiPooler.Database,
 		TableGroup:           pooler.MultiPooler.TableGroup,
 		Shard:                pooler.MultiPooler.Shard,
-		PoolerType:           pooler.MultiPooler.Type,
+		PoolerType:           poolerType,
 		CurrentServingStatus: pooler.MultiPooler.ServingStatus,
-		IsPrimary:            pooler.MultiPooler.Type == clustermetadatapb.PoolerType_PRIMARY,
+		IsPrimary:            poolerType == clustermetadatapb.PoolerType_PRIMARY,
 		LastCheckValid:       pooler.IsLastCheckValid,
+		IsInitialized:        store.IsInitialized(pooler),
 		AnalyzedAt:           time.Now(),
 	}
 
@@ -255,8 +264,12 @@ func (g *AnalysisGenerator) aggregateReplicaStats(
 				continue
 			}
 
-			// Skip if not a replica
-			if pooler.MultiPooler.Type != clustermetadatapb.PoolerType_REPLICA {
+			// Skip if not a replica - check health check type, fall back to topology
+			replicaType := pooler.PoolerType
+			if replicaType == clustermetadatapb.PoolerType_UNKNOWN {
+				replicaType = pooler.MultiPooler.Type
+			}
+			if replicaType != clustermetadatapb.PoolerType_REPLICA {
 				continue
 			}
 
@@ -273,8 +286,9 @@ func (g *AnalysisGenerator) aggregateReplicaStats(
 
 			// Also check via primary_conninfo if we didn't find it in connected followers
 			if !isPointingToPrimary && pooler.ReplicationStatus != nil && pooler.ReplicationStatus.PrimaryConnInfo != nil {
-				if pooler.ReplicationStatus.PrimaryConnInfo.Host == primary.MultiPooler.Hostname {
-					// TODO: More robust check would compare port as well
+				connInfo := pooler.ReplicationStatus.PrimaryConnInfo
+				primaryPort := primary.MultiPooler.PortMap["pg"]
+				if connInfo.Host == primary.MultiPooler.Hostname && connInfo.Port == primaryPort {
 					isPointingToPrimary = true
 				}
 			}
@@ -324,14 +338,20 @@ func (g *AnalysisGenerator) populatePrimaryInfo(
 				continue
 			}
 
-			// Look for primary in same tablegroup
-			if pooler.MultiPooler.Type != clustermetadatapb.PoolerType_PRIMARY {
+			// Look for primary in same shard - check health check type
+			// Nodes are never created with topology type PRIMARY
+			if pooler.PoolerType != clustermetadatapb.PoolerType_PRIMARY {
 				continue
 			}
 
 			// Found the primary
 			analysis.PrimaryPoolerID = pooler.MultiPooler.Id
-			analysis.PrimaryReachable = pooler.IsLastCheckValid
+			// Primary is reachable only if:
+			// 1. Health check was valid (IsLastCheckValid)
+			// 2. PostgreSQL is running (IsPostgresRunning is true)
+			// When postgres dies but multipooler is still up, IsLastCheckValid is true
+			// but IsPostgresRunning is false (set by healthcheck when using InitializationStatus)
+			analysis.PrimaryReachable = pooler.IsLastCheckValid && pooler.IsPostgresRunning
 			if pooler.LastSeen != nil {
 				analysis.PrimaryTimestamp = pooler.LastSeen.AsTime()
 			}
