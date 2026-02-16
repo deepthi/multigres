@@ -39,11 +39,30 @@ type gracePeriodKey struct {
 	poolerID string
 }
 
+// gracePeriodEntry tracks a single grace period deadline and whether it's frozen.
+// frozen=true means the problem is unhealthy and the deadline is counting down.
+// frozen=false means the problem is healthy and the deadline keeps resetting.
+type gracePeriodEntry struct {
+	deadline time.Time
+	frozen   bool
+}
+
+// cooldownEntry suppresses new visible deadlines after a grace period expires.
+// acting=true means this orch successfully executed the action.
+// acting=false means this orch attempted but the action was not confirmed successful (yet).
+type cooldownEntry struct {
+	until  time.Time
+	acting bool
+}
+
 // RecoveryGracePeriodTracker tracks grace periods for recovery actions.
 // It implements a deadline-based model where:
 // - While healthy: deadline continuously resets to now + (base + jitter)
 // - Problem detected: deadline stops updating, counts down to expiry
 // - Action executes only after deadline expires
+//
+// After an action fires, a cooldown suppresses new visible deadlines for the same
+// problem/pooler pair, preventing spurious countdowns during post-action recovery.
 //
 // Thread safety: All methods are safe for concurrent use. The internal rand.Rand
 // is protected by the mutex and only accessed while holding a write lock.
@@ -53,8 +72,9 @@ type RecoveryGracePeriodTracker struct {
 	logger *slog.Logger
 
 	mu        sync.Mutex
-	deadlines map[gracePeriodKey]time.Time
-	rng       *rand.Rand // Protected by mu - only accessed during Lock()
+	deadlines map[gracePeriodKey]gracePeriodEntry
+	cooldowns map[gracePeriodKey]cooldownEntry // suppresses new visible deadlines after action attempt
+	rng       *rand.Rand                       // Protected by mu - only accessed during Lock()
 }
 
 // RecoveryGracePeriodTrackerOption configures the deadline tracker.
@@ -82,7 +102,8 @@ func NewRecoveryGracePeriodTracker(ctx context.Context, config *config.Config, o
 		ctx:       ctx,
 		config:    config,
 		logger:    slog.Default(),
-		deadlines: make(map[gracePeriodKey]time.Time),
+		deadlines: make(map[gracePeriodKey]gracePeriodEntry),
+		cooldowns: make(map[gracePeriodKey]cooldownEntry),
 		rng:       rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano()))),
 	}
 
@@ -130,16 +151,21 @@ func (dt *RecoveryGracePeriodTracker) Observe(code types.ProblemCode, poolerID s
 	}
 
 	key := gracePeriodKey{code: code, poolerID: poolerID}
-	_, exists := dt.deadlines[key]
+	entry, exists := dt.deadlines[key]
 
 	if isHealthy {
+		// Problem resolved — clear any cooldown so future detections show fresh countdowns
+		delete(dt.cooldowns, key)
 		// Reset deadline with fresh jitter
-		dt.deadlines[key] = dt.calculateDeadline(*gracePeriodCfg)
+		dt.deadlines[key] = gracePeriodEntry{deadline: dt.calculateDeadline(*gracePeriodCfg), frozen: false}
 	} else if !exists {
 		// First time seeing this problem unhealthy - initialize deadline with base + jitter
-		dt.deadlines[key] = dt.calculateDeadline(*gracePeriodCfg)
+		dt.deadlines[key] = gracePeriodEntry{deadline: dt.calculateDeadline(*gracePeriodCfg), frozen: true}
+	} else if !entry.frozen {
+		// Transition from healthy to unhealthy - freeze the current deadline
+		dt.deadlines[key] = gracePeriodEntry{deadline: entry.deadline, frozen: true}
 	}
-	// If unhealthy and exists, freeze (do nothing - deadline unchanged)
+	// If unhealthy and already frozen, do nothing - deadline unchanged
 }
 
 // ShouldExecute checks if recovery action should execute for this problem.
@@ -168,7 +194,7 @@ func (dt *RecoveryGracePeriodTracker) ShouldExecute(problem types.Problem) bool 
 	poolerID := topoclient.MultiPoolerIDString(problem.PoolerID)
 
 	key := gracePeriodKey{code: problem.Code, poolerID: poolerID}
-	deadline, exists := dt.deadlines[key]
+	entry, exists := dt.deadlines[key]
 	if !exists {
 		// Problem has grace period but no deadline - this is unexpected
 		// Observe() should have been called before ShouldExecute()
@@ -180,16 +206,79 @@ func (dt *RecoveryGracePeriodTracker) ShouldExecute(problem types.Problem) bool 
 
 	// Check if deadline has expired
 	now := time.Now()
-	if now.After(deadline) || now.Equal(deadline) {
+	if now.After(entry.deadline) || now.Equal(entry.deadline) {
+		// Suppress new visible deadlines — MarkActed upgrades to acting=true on success
+		dt.cooldowns[key] = cooldownEntry{until: now.Add(30 * time.Second), acting: false}
 		return true
 	}
 
 	// Deadline not reached yet - log that we're deferring
-	timeRemaining := deadline.Sub(now)
+	timeRemaining := entry.deadline.Sub(now)
 	dt.logger.InfoContext(dt.ctx, "Deferring recovery action, waiting for grace period to expire",
 		"problem_code", problem.Code,
 		"time_remaining_seconds", timeRemaining.Seconds(),
-		"deadline", deadline,
+		"deadline", entry.deadline,
 	)
 	return false
+}
+
+// MarkActed records that a recovery action was successfully executed for the given
+// problem/pooler pair. Upgrades the cooldown to acting=true so the UI shows
+// this orch as the one performing the recovery.
+func (dt *RecoveryGracePeriodTracker) MarkActed(code types.ProblemCode, poolerID string) {
+	dt.mu.Lock()
+	defer dt.mu.Unlock()
+	key := gracePeriodKey{code: code, poolerID: poolerID}
+	dt.cooldowns[key] = cooldownEntry{until: time.Now().Add(30 * time.Second), acting: true}
+}
+
+// ActiveDeadline represents a grace period deadline visible to external consumers.
+type ActiveDeadline struct {
+	ProblemCode string    `json:"problem_code"`
+	PoolerID    string    `json:"pooler_id"`
+	Deadline    time.Time `json:"deadline"`
+	Acting      bool      `json:"acting"` // true if this orch fired the action and is actively recovering
+}
+
+// GetActiveDeadlines returns PrimaryIsDead grace period state for the UI.
+// Returns either:
+//   - A countdown entry (frozen, not expired, no cooldown) — appointment pending
+//   - An acting entry (cooldown active) — this orch fired the appointment action
+func (dt *RecoveryGracePeriodTracker) GetActiveDeadlines() []ActiveDeadline {
+	dt.mu.Lock()
+	defer dt.mu.Unlock()
+
+	now := time.Now()
+	var result []ActiveDeadline
+
+	// Check cooldowns — keys with active cooldowns are suppressed from countdown display.
+	// Only cooldowns with acting=true produce a visible "acting" entry.
+	activeCooldowns := make(map[gracePeriodKey]bool)
+	for key, cd := range dt.cooldowns {
+		if key.code == types.ProblemPrimaryIsDead && now.Before(cd.until) {
+			activeCooldowns[key] = true
+			if cd.acting {
+				result = append(result, ActiveDeadline{
+					ProblemCode: string(key.code),
+					PoolerID:    key.poolerID,
+					Acting:      true,
+				})
+			}
+		}
+	}
+
+	// Collect countdown entries (not in cooldown)
+	for key, entry := range dt.deadlines {
+		if entry.frozen && entry.deadline.After(now) && key.code == types.ProblemPrimaryIsDead {
+			if activeCooldowns[key] {
+				continue
+			}
+			result = append(result, ActiveDeadline{
+				ProblemCode: string(key.code),
+				PoolerID:    key.poolerID,
+				Deadline:    entry.deadline,
+			})
+		}
+	}
+	return result
 }

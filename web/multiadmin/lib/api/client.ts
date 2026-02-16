@@ -18,6 +18,9 @@ import type {
   GetBackupsRequest,
   GetBackupsResponse,
   GetPoolerStatusResponse,
+  BeginTermRequest,
+  BeginTermResponse,
+  GracePeriodResponse,
   ID,
 } from "./types";
 
@@ -213,6 +216,44 @@ export class MultiAdminClient {
   async getPoolerStatus(poolerId: ID): Promise<GetPoolerStatusResponse> {
     return this.fetch<GetPoolerStatusResponse>(
       `/api/v1/poolers/${encodeURIComponent(poolerId.cell)}/${encodeURIComponent(poolerId.name)}/status`,
+    );
+  }
+
+  // Consensus operations (proxied through Next.js API route to multipooler)
+
+  async beginTerm(
+    poolerId: ID,
+    request: BeginTermRequest,
+  ): Promise<BeginTermResponse> {
+    return this.fetch<BeginTermResponse>(
+      `/api/proxy-pooler/${encodeURIComponent(poolerId.cell)}/${encodeURIComponent(poolerId.name)}/begin-term`,
+      {
+        method: "POST",
+        body: JSON.stringify(request),
+      },
+    );
+  }
+
+  // PostgreSQL operations (proxied through Next.js API route to pgctld)
+
+  async stopPostgres(
+    poolerId: ID,
+    mode: string = "fast",
+  ): Promise<{ message: string }> {
+    return this.fetch<{ message: string }>(
+      `/api/proxy-pooler/${encodeURIComponent(poolerId.cell)}/${encodeURIComponent(poolerId.name)}/stop-postgres`,
+      {
+        method: "POST",
+        body: JSON.stringify({ mode }),
+      },
+    );
+  }
+
+  // Orchestrator operations (proxied through Next.js API route to multiorch)
+
+  async getOrchGracePeriods(orchId: ID): Promise<GracePeriodResponse> {
+    return this.fetch<GracePeriodResponse>(
+      `/api/proxy-orch/${encodeURIComponent(orchId.cell)}/${encodeURIComponent(orchId.name)}/grace-periods`,
     );
   }
 }

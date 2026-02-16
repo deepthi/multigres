@@ -29,19 +29,22 @@ import (
 	"time"
 
 	"github.com/multigres/multigres/go/common/backup"
-	"github.com/multigres/multigres/go/common/constants"
-	"github.com/multigres/multigres/go/common/servenv"
-	"github.com/multigres/multigres/go/services/pgctld"
 	"github.com/multigres/multigres/go/tools/retry"
 	"github.com/multigres/multigres/go/tools/viperutil"
 
-	"github.com/spf13/cobra"
-
-	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	clustermetadatapb "github.com/multigres/multigres/go/pb/clustermetadata"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/durationpb"
+
+	"github.com/spf13/cobra"
+
+	"github.com/multigres/multigres/go/common/constants"
+	"github.com/multigres/multigres/go/common/servenv"
 	pb "github.com/multigres/multigres/go/pb/pgctldservice"
+	"github.com/multigres/multigres/go/services/pgctld"
 )
 
 // intToInt32 safely converts int to int32 for protobuf fields.
@@ -278,8 +281,21 @@ func (s *PgCtldServerCmd) runServer(cmd *cobra.Command, args []string) error {
 		// Register gRPC service with the global GRPCServer
 		if s.grpcServer.CheckServiceMap(constants.ServicePgctld, s.senv) {
 			pb.RegisterPgCtldServer(s.grpcServer.Server, pgctldService)
+
+			// Set up grpc-gateway for REST API
+			gwmux := runtime.NewServeMux(
+				runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+					MarshalOptions:   protojson.MarshalOptions{EmitUnpopulated: true, UseProtoNames: true},
+					UnmarshalOptions: protojson.UnmarshalOptions{DiscardUnknown: true},
+				}),
+			)
+			if err := pb.RegisterPgCtldHandlerServer(context.Background(), gwmux, pgctldService); err != nil {
+				logger.Error("failed to register grpc-gateway handler", "error", err)
+			} else {
+				s.senv.HTTPHandle("/api/", gwmux)
+				logger.Info("pgctld HTTP API registered")
+			}
 		}
-		// TODO(sougou): Add http server
 	})
 
 	s.senv.OnClose(func() {

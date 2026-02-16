@@ -159,6 +159,7 @@ func (mo *MultiOrch) Init() error {
 
 	mo.senv.HTTPHandleFunc("/", mo.handleIndex)
 	mo.senv.HTTPHandleFunc("/ready", mo.handleReady)
+	mo.senv.HTTPHandleFunc("/api/v1/grace-periods", mo.handleGracePeriods)
 
 	// Create RPC client for recovery engine health checks
 	rpcClient := rpcclient.NewMultiPoolerClient(maxPoolerConnections)

@@ -247,10 +247,19 @@ func (p *localProvisioner) provisionPgctld(ctx context.Context, dbName, tableGro
 	// Start pgctld server
 	fmt.Printf("▶️  - Starting pgctld server (gRPC:%d)...", grpcPort)
 
+	// HTTP port for gRPC-gateway (hardcoded offset from multipooler HTTP port for prototyping)
+	multipoolerConfig, _ := p.getCellServiceConfig(cell, "multipooler")
+	multipoolerHTTPPort := ports.DefaultMultipoolerHTTP
+	if port, ok := multipoolerConfig["http_port"].(int); ok && port > 0 {
+		multipoolerHTTPPort = port
+	}
+	httpPort := multipoolerHTTPPort + 1000
+
 	serverArgs := []string{
 		"server",
 		"--pooler-dir", poolerDir,
 		"--grpc-port", strconv.Itoa(grpcPort),
+		"--http-port", strconv.Itoa(httpPort),
 		"--pg-port", strconv.Itoa(pgPort),
 		"--pg-database", pgDatabase,
 		"--pg-user", pgUser,

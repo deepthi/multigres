@@ -148,9 +148,6 @@ func request_PgCtld_Status_0(ctx context.Context, marshaler runtime.Marshaler, c
 		protoReq StatusRequest
 		metadata runtime.ServerMetadata
 	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
@@ -163,9 +160,6 @@ func local_request_PgCtld_Status_0(ctx context.Context, marshaler runtime.Marsha
 		protoReq StatusRequest
 		metadata runtime.ServerMetadata
 	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 	msg, err := server.Status(ctx, &protoReq)
 	return msg, metadata, err
 }
@@ -283,7 +277,7 @@ func RegisterPgCtldHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pgctldservice.PgCtld/Stop", runtime.WithHTTPPathPattern("/pgctldservice.PgCtld/Stop"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pgctldservice.PgCtld/Stop", runtime.WithHTTPPathPattern("/api/v1/postgres/stop"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -337,13 +331,13 @@ func RegisterPgCtldHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		}
 		forward_PgCtld_ReloadConfig_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPost, pattern_PgCtld_Status_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_PgCtld_Status_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pgctldservice.PgCtld/Status", runtime.WithHTTPPathPattern("/pgctldservice.PgCtld/Status"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pgctldservice.PgCtld/Status", runtime.WithHTTPPathPattern("/api/v1/postgres/status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -478,7 +472,7 @@ func RegisterPgCtldHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pgctldservice.PgCtld/Stop", runtime.WithHTTPPathPattern("/pgctldservice.PgCtld/Stop"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pgctldservice.PgCtld/Stop", runtime.WithHTTPPathPattern("/api/v1/postgres/stop"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -525,11 +519,11 @@ func RegisterPgCtldHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		}
 		forward_PgCtld_ReloadConfig_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPost, pattern_PgCtld_Status_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_PgCtld_Status_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pgctldservice.PgCtld/Status", runtime.WithHTTPPathPattern("/pgctldservice.PgCtld/Status"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pgctldservice.PgCtld/Status", runtime.WithHTTPPathPattern("/api/v1/postgres/status"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -598,10 +592,10 @@ func RegisterPgCtldHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 
 var (
 	pattern_PgCtld_Start_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "Start"}, ""))
-	pattern_PgCtld_Stop_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "Stop"}, ""))
+	pattern_PgCtld_Stop_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "postgres", "stop"}, ""))
 	pattern_PgCtld_Restart_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "Restart"}, ""))
 	pattern_PgCtld_ReloadConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "ReloadConfig"}, ""))
-	pattern_PgCtld_Status_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "Status"}, ""))
+	pattern_PgCtld_Status_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "postgres", "status"}, ""))
 	pattern_PgCtld_Version_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "Version"}, ""))
 	pattern_PgCtld_InitDataDir_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "InitDataDir"}, ""))
 	pattern_PgCtld_PgRewind_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"pgctldservice.PgCtld", "PgRewind"}, ""))

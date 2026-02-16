@@ -1591,10 +1591,10 @@ func (pm *MultiPoolerManager) takeRemedialAction(ctx context.Context, action rem
 		}
 
 	case remedialActionStartPostgres:
-		pm.setMonitorReason(ctx, reasonStartingPostgres, "MonitorPostgres: PostgreSQL initialized but not running, starting PostgreSQL")
-		if err := pm.startPostgres(ctx); err != nil {
-			pm.logger.ErrorContext(ctx, "MonitorPostgres: failed to start PostgreSQL, will retry", "error", err)
-		}
+		// TODO: Remove this early return once multiorch failover is fully working.
+		// For now, skip auto-restart so multiorch can detect the failure and elect a new primary.
+		pm.logger.InfoContext(ctx, "MonitorPostgres: PostgreSQL not running, skipping auto-restart (debugging)")
+		return
 
 	case remedialActionRestoreFromBackup:
 		pm.setMonitorReason(ctx, reasonRestoringFromBackup, "MonitorPostgres: directory not initialized but backups available, restoring from backup")

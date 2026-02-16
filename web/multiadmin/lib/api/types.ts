@@ -223,3 +223,38 @@ export interface StandbyReplicationStatus {
   lag?: string; // Duration as string (e.g., "5s")
   last_xact_replay_timestamp?: string;
 }
+
+// Grace period types (from multiorch recovery engine)
+
+export interface GracePeriod {
+  problem_code: string;
+  pooler_id: string;
+  deadline: string; // ISO 8601 timestamp
+  acting: boolean; // true if this orch fired the action and is actively recovering
+}
+
+export interface GracePeriodResponse {
+  grace_periods: GracePeriod[];
+}
+
+// Consensus BeginTerm types (from consensusdata.proto)
+
+export interface BeginTermRequest {
+  term?: number;
+  candidate_id?: ID;
+  shard_id?: string;
+  policy_version?: number;
+  action?: BeginTermAction;
+  force?: boolean;
+}
+
+export type BeginTermAction =
+  | "BEGIN_TERM_ACTION_UNSPECIFIED"
+  | "BEGIN_TERM_ACTION_NO_ACTION"
+  | "BEGIN_TERM_ACTION_REVOKE";
+
+export interface BeginTermResponse {
+  term?: number;
+  accepted?: boolean;
+  pooler_id?: string;
+}

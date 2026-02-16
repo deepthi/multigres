@@ -15,6 +15,7 @@
 package multiorch
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
@@ -54,6 +55,15 @@ func (mo *MultiOrch) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to execute template: %v", err), http.StatusInternalServerError)
 		return
+	}
+}
+
+// handleGracePeriods returns active grace period deadlines as JSON.
+func (mo *MultiOrch) handleGracePeriods(w http.ResponseWriter, r *http.Request) {
+	deadlines := mo.recoveryEngine.GetActiveGracePeriods()
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(map[string]any{"grace_periods": deadlines}); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to encode response: %v", err), http.StatusInternalServerError)
 	}
 }
 

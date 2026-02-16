@@ -265,6 +265,7 @@ func (re *Engine) attemptRecovery(ctx context.Context, problem types.Problem) {
 		"problem_code", problem.Code,
 		"pooler_id", poolerIDStr,
 	)
+	re.recoveryGracePeriodTracker.MarkActed(problem.Code, poolerIDStr)
 	re.metrics.recoveryActionDuration.Record(ctx, durationMs, actionName, string(problem.Code), RecoveryActionStatusSuccess, problem.ShardKey.Database, problem.ShardKey.Shard)
 
 	// Post-recovery refresh

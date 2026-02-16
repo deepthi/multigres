@@ -16,9 +16,25 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { cn } from "@/lib/utils";
-import { useApi } from "@/lib/api";
-import type { MultiGateway, MultiPoolerWithStatus, ID } from "@/lib/api";
+import { useApi, ApiError } from "@/lib/api";
+import type {
+  MultiGateway,
+  MultiPoolerWithStatus,
+  MultiOrch,
+  GracePeriod,
+  ID,
+} from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Utility functions for smart data comparison
 function getStableId(id?: ID): string {
@@ -183,6 +199,53 @@ function isPrimary(pooler: MultiPoolerWithStatus): boolean {
   return pooler.type === "PRIMARY";
 }
 
+// Countdown timer driven purely client-side after mount.
+// Locks the deadline on first render so backend polling doesn't cause jumps.
+function CountdownTimer({ deadline }: { deadline: string }) {
+  const targetRef = useRef(new Date(deadline).getTime());
+  const initialRemainingRef = useRef(
+    Math.max(1, targetRef.current - Date.now()),
+  );
+  const [remaining, setRemaining] = useState(
+    () => initialRemainingRef.current,
+  );
+  const [appointing, setAppointing] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const ms = Math.max(0, targetRef.current - Date.now());
+      setRemaining(ms);
+      if (ms <= 0) {
+        setAppointing(true);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (appointing) {
+    return (
+      <div className="text-red-400 font-bold animate-pulse">Appointing...</div>
+    );
+  }
+
+  const seconds = (remaining / 1000).toFixed(1);
+  const progress = remaining / initialRemainingRef.current;
+
+  return (
+    <div className="mt-1">
+      <div className="text-amber-400 font-mono text-sm font-bold">
+        Appointment Timeout {seconds}s
+      </div>
+      <div className="mt-1 h-1 w-full bg-muted rounded-full overflow-hidden">
+        <div
+          className="h-full bg-amber-500 rounded-full"
+          style={{ width: `${progress * 100}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function TopologyGraph({
   heightClass: _heightClass,
 }: {
@@ -191,12 +254,29 @@ export function TopologyGraph({
   const api = useApi();
   const [gateways, setGateways] = useState<MultiGateway[]>([]);
   const [poolers, setPoolers] = useState<MultiPoolerWithStatus[]>([]);
+  const [orchs, setOrchs] = useState<MultiOrch[]>([]);
+  const [orchGracePeriods, setOrchGracePeriods] = useState<
+    Map<string, GracePeriod[]>
+  >(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    pooler: MultiPoolerWithStatus;
+  } | null>(null);
+
+  // Shutdown confirmation dialog state
+  const [revokeTarget, setRevokeTarget] = useState<MultiPoolerWithStatus | null>(null);
+  const [revoking, setRevoking] = useState(false);
+  const [revokeError, setRevokeError] = useState<string | null>(null);
 
   const prevDataRef = useRef({
     gateways: [] as MultiGateway[],
     poolers: [] as MultiPoolerWithStatus[],
+    orchs: [] as MultiOrch[],
   });
 
   const fetchData = useCallback(
@@ -207,13 +287,15 @@ export function TopologyGraph({
         }
         setError(null);
 
-        const [gatewaysRes, poolersRes] = await Promise.all([
+        const [gatewaysRes, poolersRes, orchsRes] = await Promise.all([
           api.getGateways(),
           api.getPoolers(),
+          api.getOrchs(),
         ]);
 
         const newGateways = gatewaysRes.gateways || [];
         const basePoolers = poolersRes.poolers || [];
+        const newOrchs = orchsRes.orchs || [];
 
         // Fetch status for each pooler in parallel
         const poolerStatusPromises = basePoolers.map(async (pooler) => {
@@ -233,6 +315,22 @@ export function TopologyGraph({
 
         const newPoolers = await Promise.all(poolerStatusPromises);
 
+        // Fetch grace periods for each orch in parallel
+        const gracePeriodMap = new Map<string, GracePeriod[]>();
+        const gracePromises = newOrchs.map(async (orch) => {
+          if (!orch.id) return;
+          try {
+            const res = await api.getOrchGracePeriods(orch.id);
+            if (res.grace_periods?.length > 0) {
+              gracePeriodMap.set(orch.id.name, res.grace_periods);
+            }
+          } catch {
+            // Silently ignore - orch may not support this endpoint yet
+          }
+        });
+        await Promise.all(gracePromises);
+        setOrchGracePeriods(gracePeriodMap);
+
         // Smart comparison - only update if data actually changed
         const gatewaysChanged = hasDataChanged(
           prevDataRef.current.gateways,
@@ -242,11 +340,20 @@ export function TopologyGraph({
           prevDataRef.current.poolers,
           newPoolers,
         );
+        const orchsChanged = hasDataChanged(
+          prevDataRef.current.orchs,
+          newOrchs,
+        );
 
-        if (gatewaysChanged || poolersChanged) {
+        if (gatewaysChanged || poolersChanged || orchsChanged) {
           setGateways(newGateways);
           setPoolers(newPoolers);
-          prevDataRef.current = { gateways: newGateways, poolers: newPoolers };
+          setOrchs(newOrchs);
+          prevDataRef.current = {
+            gateways: newGateways,
+            poolers: newPoolers,
+            orchs: newOrchs,
+          };
         }
       } catch (err) {
         // On initial fetch, show error
@@ -268,8 +375,7 @@ export function TopologyGraph({
   );
 
   useEffect(() => {
-    // Initial fetch
-    fetchData(true);
+    let cancelled = false;
 
     // Get poll interval from env or use default (500ms)
     const pollInterval = parseInt(
@@ -277,18 +383,28 @@ export function TopologyGraph({
       10,
     );
 
-    // Start polling
-    const intervalId = setInterval(() => {
-      fetchData(false);
-    }, pollInterval);
+    // Sequential polling: wait for fetch to complete, then wait interval
+    async function poll() {
+      await fetchData(true);
+      while (!cancelled) {
+        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+        if (cancelled) break;
+        await fetchData(false);
+      }
+    }
 
-    // Cleanup on unmount
-    return () => clearInterval(intervalId);
+    poll();
+
+    return () => {
+      cancelled = true;
+    };
   }, [fetchData]);
 
-  const { nodes, edges } = useMemo(() => {
-    if (gateways.length === 0 && poolers.length === 0) {
-      return { nodes: [], edges: [] };
+  const { nodes, edges, poolerNodeMap } = useMemo(() => {
+    const poolerNodeMap = new Map<string, MultiPoolerWithStatus>();
+
+    if (gateways.length === 0 && poolers.length === 0 && orchs.length === 0) {
+      return { nodes: [], edges: [], poolerNodeMap };
     }
 
     const nodes: Node[] = [];
@@ -300,6 +416,8 @@ export function TopologyGraph({
     const REPLICA_Y = 450;
     const NODE_WIDTH = 150;
     const NODE_GAP = 100;
+    const ORCH_NODE_HEIGHT = 120;
+    const ORCH_NODE_GAP = 60;
 
     // Create gateway nodes
     const gatewayStartX = 100;
@@ -354,16 +472,22 @@ export function TopologyGraph({
       }
     });
 
+    // Compute the center X of the gateway row for alignment
+    const gatewayCenterX =
+      gateways.length > 0
+        ? gatewayStartX +
+          ((gateways.length - 1) * (NODE_WIDTH + NODE_GAP)) / 2
+        : gatewayStartX;
+
     // Create pooler nodes for each group
     let groupIndex = 0;
     poolerGroups.forEach((group, key) => {
       const [database, tableGroup, shard] = key.split("/");
-      const groupCenterX =
-        gatewayStartX + groupIndex * (NODE_WIDTH * 2 + NODE_GAP * 2);
 
       // Primary nodes - render all primaries
       group.primaries.forEach((primary, primaryIndex) => {
         const primaryId = `pooler-${primary.id?.name || `primary-${groupIndex}-${primaryIndex}`}`;
+        poolerNodeMap.set(primaryId, primary);
         const hasValidStatus = hasPrimaryStatus(primary);
         const hasConnectedReplicas =
           countConnectedReplicas(primary, group.replicas) > 0;
@@ -373,11 +497,9 @@ export function TopologyGraph({
           !hasValidStatus ||
           (!hasConnectedReplicas && group.replicas.length > 0);
 
-        // Offset primaries horizontally if there are multiple
+        // Center primary under the gateway row
         const primaryX =
-          groupCenterX +
-          NODE_WIDTH / 2 +
-          primaryIndex * (NODE_WIDTH + NODE_GAP);
+          gatewayCenterX + primaryIndex * (NODE_WIDTH + NODE_GAP);
 
         nodes.push({
           id: primaryId,
@@ -429,10 +551,16 @@ export function TopologyGraph({
         }
       });
 
-      // Replica nodes
+      // Replica nodes - centered under the gateway row
+      const replicaTotalWidth =
+        group.replicas.length * NODE_WIDTH +
+        (group.replicas.length - 1) * NODE_GAP;
+      const replicaStartX = gatewayCenterX - replicaTotalWidth / 2 + NODE_WIDTH / 2;
+
       group.replicas.forEach((replica, replicaIndex) => {
         const replicaId = `pooler-${replica.id?.name || `replica-${groupIndex}-${replicaIndex}`}`;
-        const replicaX = groupCenterX + replicaIndex * (NODE_WIDTH + NODE_GAP);
+        poolerNodeMap.set(replicaId, replica);
+        const replicaX = replicaStartX + replicaIndex * (NODE_WIDTH + NODE_GAP);
 
         // Find the primary this replica is connected to (if any)
         const connectedPrimary = group.primaries.find((p) =>
@@ -493,8 +621,156 @@ export function TopologyGraph({
       groupIndex++;
     });
 
-    return { nodes, edges };
-  }, [gateways, poolers]);
+    // Detect cluster health: unhealthy if any pooler node is disconnected
+    const clusterUnhealthy = nodes.some(
+      (node) => node.className === "disconnected-node",
+    );
+
+    // Check if a healthy primary exists — if so, appointment already happened
+    // and countdowns on other orchs are stale.
+    const hasHealthyPrimary = poolers.some(
+      (p) => isPrimary(p) && hasPrimaryStatus(p),
+    );
+
+    // Create orchestrator nodes - stacked vertically to the right
+    if (orchs.length > 0) {
+      // Find the rightmost x position of existing nodes
+      const maxX = nodes.reduce(
+        (max, node) => Math.max(max, node.position.x),
+        0,
+      );
+      const orchX = maxX + NODE_WIDTH + NODE_GAP / 2;
+
+      // Center the stack vertically, shifted down
+      const totalOrchHeight =
+        orchs.length * ORCH_NODE_HEIGHT +
+        (orchs.length - 1) * ORCH_NODE_GAP;
+      const orchStartY = REPLICA_Y - totalOrchHeight / 2;
+
+      orchs.forEach((orch, index) => {
+        const id = `orch-${orch.id?.name || index}`;
+        const orchName = orch.id?.name || `orch-${index + 1}`;
+        const gracePeriods = orchGracePeriods.get(orchName) || [];
+        const actingEntry = gracePeriods.find((gp) => gp.acting);
+        const countdownEntry = gracePeriods.find((gp) => !gp.acting && gp.deadline);
+        const showGracePeriod =
+          gracePeriods.length > 0 &&
+          (!!actingEntry || !hasHealthyPrimary);
+        const orchClassName = showGracePeriod
+          ? "election-pending-node"
+          : clusterUnhealthy
+            ? "recovering-node"
+            : "monitoring-node";
+
+        // Determine what to show on this orch node.
+        // If a healthy primary exists, the appointment already happened —
+        // suppress countdowns from orchs with stale grace periods.
+        let orchContent: React.ReactNode;
+        if (actingEntry) {
+          // This orch fired the appointment action
+          orchContent = (
+            <div className="text-red-400 font-bold animate-pulse">
+              Appointing...
+            </div>
+          );
+        } else if (countdownEntry && !hasHealthyPrimary) {
+          // This orch is counting down to appointment (no primary yet)
+          orchContent = (
+            <CountdownTimer deadline={countdownEntry.deadline} />
+          );
+        } else {
+          const orchStatus = clusterUnhealthy ? "Recovering" : "Monitoring";
+          orchContent = (
+            <div
+              className={cn(
+                clusterUnhealthy ? "text-amber-500" : "text-green-500",
+              )}
+            >
+              {orchStatus}
+            </div>
+          );
+        }
+
+        nodes.push({
+          id,
+          position: {
+            x: orchX,
+            y: orchStartY + index * (ORCH_NODE_HEIGHT + ORCH_NODE_GAP),
+          },
+          className: orchClassName,
+          data: {
+            label: (
+              <div className="text-left text-xs">
+                <div className="bg-sidebar p-3 border-b">
+                  <div className="text-muted-foreground text-[10px] uppercase tracking-wide mb-1">
+                    Orchestrator
+                  </div>
+                  <div className="font-semibold">{orchName}</div>
+                  <div className="mt-1">{orchContent}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1 p-3">
+                  <div className="text-muted-foreground">Cell</div>
+                  <div className="text-right">
+                    {orch.id?.cell || "unknown"}
+                  </div>
+                </div>
+              </div>
+            ),
+          },
+        });
+      });
+    }
+
+    return { nodes, edges, poolerNodeMap };
+  }, [gateways, poolers, orchs, orchGracePeriods]);
+
+  // Context menu: right-click on primary nodes
+  const handleNodeContextMenu = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      event.preventDefault();
+      const pooler = poolerNodeMap.get(node.id);
+      if (pooler && pooler.type === "PRIMARY") {
+        setContextMenu({ x: event.clientX, y: event.clientY, pooler });
+      }
+    },
+    [poolerNodeMap],
+  );
+
+  const handlePaneClick = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  // Close context menu on Escape or scroll
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [contextMenu]);
+
+  // Handle shutdown postgres via pgctld Stop
+  const handleShutdownPostgres = useCallback(async () => {
+    if (!revokeTarget?.id) return;
+    setRevoking(true);
+    setRevokeError(null);
+    try {
+      await api.stopPostgres(revokeTarget.id);
+      setRevokeTarget(null);
+    } catch (err) {
+      setRevokeError(
+        err instanceof Error ? err.message : "Failed to stop postgres",
+      );
+    } finally {
+      setRevoking(false);
+    }
+  }, [api, revokeTarget]);
 
   if (loading) {
     return (
@@ -529,6 +805,8 @@ export function TopologyGraph({
         fitViewOptions={{ padding: 0.4 }}
         fitView
         className="bg-background"
+        onNodeContextMenu={handleNodeContextMenu}
+        onPaneClick={handlePaneClick}
       >
         <Background
           color="var(--foreground)"
@@ -537,6 +815,70 @@ export function TopologyGraph({
           gap={16}
         />
       </ReactFlow>
+
+      {/* Context menu for primary nodes */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 min-w-[180px] rounded-md border bg-popover p-1 shadow-md"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+        >
+          <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+            {contextMenu.pooler.id?.name}
+          </div>
+          <div className="h-px bg-border -mx-1 my-1" />
+          <button
+            className="flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-destructive/10 outline-none"
+            onClick={() => {
+              setRevokeTarget(contextMenu.pooler);
+              setContextMenu(null);
+            }}
+          >
+            Shutdown Postgres
+          </button>
+        </div>
+      )}
+
+      {/* Revoke confirmation dialog */}
+      <AlertDialog
+        open={!!revokeTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRevokeTarget(null);
+            setRevokeError(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Shutdown Postgres</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will stop PostgreSQL on{" "}
+              <span className="font-semibold text-foreground">
+                {revokeTarget?.id?.name}
+              </span>{" "}
+              in cell{" "}
+              <span className="font-semibold text-foreground">
+                {revokeTarget?.id?.cell}
+              </span>
+              . If this is the primary, the orchestrator will detect it and
+              appoint a new primary automatically.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {revokeError && (
+            <p className="text-sm text-destructive">{revokeError}</p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={revoking}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleShutdownPostgres}
+              disabled={revoking}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {revoking ? "Shutting down..." : "Shutdown"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

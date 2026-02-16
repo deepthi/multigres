@@ -21,6 +21,7 @@
 package pgctldservice
 
 import (
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1131,7 +1132,7 @@ var File_pgctldservice_proto protoreflect.FileDescriptor
 
 const file_pgctldservice_proto_rawDesc = "" +
 	"\n" +
-	"\x13pgctldservice.proto\x12\rpgctldservice\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
+	"\x13pgctldservice.proto\x12\rpgctldservice\x1a\x1cgoogle/api/annotations.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
 	"\fStartRequest\x12\x12\n" +
 	"\x04port\x18\x01 \x01(\x05R\x04port\x12\x1d\n" +
 	"\n" +
@@ -1210,13 +1211,13 @@ const file_pgctldservice_proto_rawDesc = "" +
 	"\bSTARTING\x10\x02\x12\v\n" +
 	"\aRUNNING\x10\x03\x12\f\n" +
 	"\bSTOPPING\x10\x04\x12\x13\n" +
-	"\x0fNOT_INITIALIZED\x10\x052\xe4\x04\n" +
+	"\x0fNOT_INITIALIZED\x10\x052\xa7\x05\n" +
 	"\x06PgCtld\x12B\n" +
-	"\x05Start\x12\x1b.pgctldservice.StartRequest\x1a\x1c.pgctldservice.StartResponse\x12?\n" +
-	"\x04Stop\x12\x1a.pgctldservice.StopRequest\x1a\x1b.pgctldservice.StopResponse\x12H\n" +
+	"\x05Start\x12\x1b.pgctldservice.StartRequest\x1a\x1c.pgctldservice.StartResponse\x12a\n" +
+	"\x04Stop\x12\x1a.pgctldservice.StopRequest\x1a\x1b.pgctldservice.StopResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/v1/postgres/stop\x12H\n" +
 	"\aRestart\x12\x1d.pgctldservice.RestartRequest\x1a\x1e.pgctldservice.RestartResponse\x12W\n" +
-	"\fReloadConfig\x12\".pgctldservice.ReloadConfigRequest\x1a#.pgctldservice.ReloadConfigResponse\x12E\n" +
-	"\x06Status\x12\x1c.pgctldservice.StatusRequest\x1a\x1d.pgctldservice.StatusResponse\x12H\n" +
+	"\fReloadConfig\x12\".pgctldservice.ReloadConfigRequest\x1a#.pgctldservice.ReloadConfigResponse\x12f\n" +
+	"\x06Status\x12\x1c.pgctldservice.StatusRequest\x1a\x1d.pgctldservice.StatusResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/api/v1/postgres/status\x12H\n" +
 	"\aVersion\x12\x1d.pgctldservice.VersionRequest\x1a\x1e.pgctldservice.VersionResponse\x12T\n" +
 	"\vInitDataDir\x12!.pgctldservice.InitDataDirRequest\x1a\".pgctldservice.InitDataDirResponse\x12K\n" +
 	"\bPgRewind\x12\x1e.pgctldservice.PgRewindRequest\x1a\x1f.pgctldservice.PgRewindResponseB4Z2github.com/multigres/multigres/go/pb/pgctldserviceb\x06proto3"
