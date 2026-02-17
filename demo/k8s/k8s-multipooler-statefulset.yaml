@@ -180,6 +180,7 @@ spec:
             - server
             - --pooler-dir=/data
             - --grpc-port=16200
+            - --http-port=17000
             - --pg-port=5432
             - --grpc-socket-file=/data/pgctld.sock
             - --pg-hba-template=/etc/pgctld/pg_hba_template.conf
@@ -187,6 +188,8 @@ spec:
           ports:
             - containerPort: 16200
               name: pgctldgrpc # This can't be grpc because multipooler has a grpc port.
+            - containerPort: 17000
+              name: pgctldhttp
             - containerPort: 5432
               name: postgres
           volumeMounts:
