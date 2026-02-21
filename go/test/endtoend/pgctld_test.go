@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pgctld
+package endtoend
 
 import (
 	"context"
@@ -37,19 +37,7 @@ import (
 	"github.com/multigres/multigres/go/cmd/pgctld/testutil"
 	pb "github.com/multigres/multigres/go/pb/pgctldservice"
 	"github.com/multigres/multigres/go/test/utils"
-	"github.com/multigres/multigres/go/tools/pathutil"
 )
-
-// TestMain sets up the test environment for pgctld tests
-func TestMain(m *testing.M) {
-	// Add bin/ to PATH so pgctld binary can be found
-	if err := pathutil.PrependBinToPath(); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to add bin/ to PATH: %v\n", err)
-		os.Exit(1) //nolint:forbidigo
-	}
-
-	os.Exit(m.Run()) //nolint:forbidigo
-}
 
 // setupTestEnv sets up environment variables for PostgreSQL tests
 func setupTestEnv(cmd *exec.Cmd) {
@@ -179,9 +167,7 @@ timeout: 30
 			"--pooler-dir", dataDir,
 			"--grpc-port", strconv.Itoa(grpcPort),
 			"--pg-port", strconv.Itoa(pgPort),
-			"--config-file", pgctldConfigFile,
-			"--backup-type", "filesystem",
-			"--backup-path", filepath.Join(tempDir, "backups"))
+			"--config-file", pgctldConfigFile)
 
 		// Set MULTIGRES_TESTDATA_DIR for directory-deletion triggered cleanup
 		serverCmd.Env = append(os.Environ(),
@@ -1126,9 +1112,7 @@ func TestOrphanDetectionWithRealPostgreSQL(t *testing.T) {
 		"--pooler-dir", dataDir,
 		"--grpc-port", strconv.Itoa(grpcPort),
 		"--pg-port", strconv.Itoa(pgPort),
-		"--config-file", pgctldConfigFile,
-		"--backup-type", "filesystem",
-		"--backup-path", filepath.Join(tempDir, "backups"))
+		"--config-file", pgctldConfigFile)
 
 	// Set MULTIGRES_TESTDATA_DIR for directory-deletion triggered cleanup
 	// Add endtoend directory to PATH so run_command_if_parent_dies.sh can be found

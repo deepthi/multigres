@@ -128,13 +128,12 @@ func getPostgresSocketPath(pgctldDataDir string) string {
 
 // createAndVerifyBackup creates a backup and verifies it was created successfully.
 // Returns the backup ID.
-func createAndVerifyBackup(t *testing.T, client multipoolermanagerpb.MultiPoolerManagerClient, backupType string, forcePrimary bool, timeout time.Duration, overrides map[string]string) string {
+func createAndVerifyBackup(t *testing.T, client multipoolermanagerpb.MultiPoolerManagerClient, backupType string, forcePrimary bool, timeout time.Duration) string {
 	t.Helper()
 
 	req := &multipoolermanagerdata.BackupRequest{
 		ForcePrimary: forcePrimary,
 		Type:         backupType,
-		Overrides:    overrides,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
