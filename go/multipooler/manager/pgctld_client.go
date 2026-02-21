@@ -92,6 +92,14 @@ func (p *protectedPgctldClient) PgRewind(ctx context.Context, req *pgctldpb.PgRe
 	return p.client.PgRewind(ctx, req, opts...)
 }
 
+// Kill sends SIGKILL to PostgreSQL. Requires action lock to be held by caller.
+func (p *protectedPgctldClient) Kill(ctx context.Context, req *pgctldpb.KillRequest, opts ...grpc.CallOption) (*pgctldpb.KillResponse, error) {
+	if err := AssertActionLockHeld(ctx); err != nil {
+		return nil, fmt.Errorf("Kill requires action lock to be held: %w", err)
+	}
+	return p.client.Kill(ctx, req, opts...)
+}
+
 // Status returns PostgreSQL status. Does not require action lock (read-only operation).
 func (p *protectedPgctldClient) Status(ctx context.Context, req *pgctldpb.StatusRequest, opts ...grpc.CallOption) (*pgctldpb.StatusResponse, error) {
 	return p.client.Status(ctx, req, opts...)

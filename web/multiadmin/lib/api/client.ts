@@ -249,6 +249,13 @@ export class MultiAdminClient {
     );
   }
 
+  async killPostgres(poolerId: ID): Promise<{ message: string }> {
+    return this.fetch<{ message: string }>(
+      `/api/proxy-pooler/${encodeURIComponent(poolerId.cell)}/${encodeURIComponent(poolerId.name)}/kill-postgres`,
+      { method: "POST", body: "{}" },
+    );
+  }
+
   // Orchestrator operations (proxied through Next.js API route to multiorch)
 
   async getOrchGracePeriods(orchId: ID): Promise<GracePeriodResponse> {

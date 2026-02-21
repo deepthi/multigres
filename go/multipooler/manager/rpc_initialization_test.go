@@ -876,6 +876,10 @@ func (m *mockPgctldClient) Version(ctx context.Context, req *pgctldpb.VersionReq
 	return &pgctldpb.VersionResponse{}, nil
 }
 
+func (m *mockPgctldClient) Kill(ctx context.Context, req *pgctldpb.KillRequest, opts ...grpc.CallOption) (*pgctldpb.KillResponse, error) {
+	return &pgctldpb.KillResponse{}, nil
+}
+
 func (m *mockPgctldClient) PgRewind(ctx context.Context, req *pgctldpb.PgRewindRequest, opts ...grpc.CallOption) (*pgctldpb.PgRewindResponse, error) {
 	return &pgctldpb.PgRewindResponse{}, nil
 }

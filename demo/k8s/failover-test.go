@@ -49,7 +49,6 @@ const (
 
 // Kubernetes configuration
 const (
-	pgctldBin = "/usr/local/bin/pgctld"
 	poolerDir = "/data"
 )
 
@@ -391,26 +390,25 @@ func getPoolerInfo(cell, serviceID string) *PoolerInfo {
 	}
 }
 
-func stopPooler(poolerInfo *PoolerInfo, config *Config) error {
-	logInfo("Stopping pooler: " + poolerInfo.PodName)
+func killPostgres(poolerInfo *PoolerInfo, config *Config) error {
+	logInfo("Sending SIGKILL to postgres on: " + poolerInfo.PodName)
 
 	cmd := exec.Command("kubectl",
 		"--context", config.KubectlContext,
 		"exec", "-n", config.KubernetesNamespace,
 		"pod/"+poolerInfo.PodName,
 		"-c", "pgctld", "--",
-		pgctldBin, "stop",
-		"--pooler-dir", poolerDir,
+		"sh", "-c", "kill -9 $(head -1 "+poolerDir+"/pg_data/postmaster.pid)",
 	)
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to stop pooler: %w", err)
+		return fmt.Errorf("failed to SIGKILL postgres: %w", err)
 	}
 
 	timestamp := time.Now().UTC().Format("2006-01-02 15:04:05.000") + " UTC"
-	logSuccess("Pooler stopped at " + timestamp)
+	logSuccess("Postgres killed at " + timestamp)
 	return nil
 }
 
@@ -752,9 +750,9 @@ func failoverLoop(ctx context.Context, config *Config) error {
 			logInfo("Auto-yes enabled, proceeding automatically...")
 		}
 
-		// Stop the primary
-		if err := stopPooler(primaryInfo, config); err != nil {
-			logError(fmt.Sprintf("Failed to stop pooler: %v", err))
+		// Kill postgres on the primary
+		if err := killPostgres(primaryInfo, config); err != nil {
+			logError(fmt.Sprintf("Failed to kill postgres: %v", err))
 			return err
 		}
 

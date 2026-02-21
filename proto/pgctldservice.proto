@@ -37,6 +37,14 @@ service PgCtld {
     };
   }
 
+  // Kill PostgreSQL server with SIGKILL (unclean, for testing)
+  rpc Kill(KillRequest) returns (KillResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/postgres/kill"
+      body: "*"
+    };
+  }
+
   // Restart PostgreSQL server
   rpc Restart(RestartRequest) returns (RestartResponse);
 
@@ -198,6 +206,14 @@ message InitDataDirRequest {
 
 message InitDataDirResponse {
   // Status message
+  string message = 1;
+}
+
+// Kill PostgreSQL server with SIGKILL (unclean, for testing)
+message KillRequest {
+}
+
+message KillResponse {
   string message = 1;
 }
 

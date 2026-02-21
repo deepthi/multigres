@@ -909,6 +909,87 @@ func (x *InitDataDirResponse) GetMessage() string {
 	return ""
 }
 
+// Kill PostgreSQL server with SIGKILL (unclean, for testing)
+type KillRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KillRequest) Reset() {
+	*x = KillRequest{}
+	mi := &file_pgctldservice_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KillRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KillRequest) ProtoMessage() {}
+
+func (x *KillRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pgctldservice_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KillRequest.ProtoReflect.Descriptor instead.
+func (*KillRequest) Descriptor() ([]byte, []int) {
+	return file_pgctldservice_proto_rawDescGZIP(), []int{14}
+}
+
+type KillResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KillResponse) Reset() {
+	*x = KillResponse{}
+	mi := &file_pgctldservice_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KillResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KillResponse) ProtoMessage() {}
+
+func (x *KillResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pgctldservice_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use KillResponse.ProtoReflect.Descriptor instead.
+func (*KillResponse) Descriptor() ([]byte, []int) {
+	return file_pgctldservice_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *KillResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 // PgRewind rewinds a PostgreSQL data directory to an earlier point in the timeline
 type PgRewindRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -929,7 +1010,7 @@ type PgRewindRequest struct {
 
 func (x *PgRewindRequest) Reset() {
 	*x = PgRewindRequest{}
-	mi := &file_pgctldservice_proto_msgTypes[14]
+	mi := &file_pgctldservice_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -941,7 +1022,7 @@ func (x *PgRewindRequest) String() string {
 func (*PgRewindRequest) ProtoMessage() {}
 
 func (x *PgRewindRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pgctldservice_proto_msgTypes[14]
+	mi := &file_pgctldservice_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -954,7 +1035,7 @@ func (x *PgRewindRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PgRewindRequest.ProtoReflect.Descriptor instead.
 func (*PgRewindRequest) Descriptor() ([]byte, []int) {
-	return file_pgctldservice_proto_rawDescGZIP(), []int{14}
+	return file_pgctldservice_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PgRewindRequest) GetSourceHost() string {
@@ -1003,7 +1084,7 @@ type PgRewindResponse struct {
 
 func (x *PgRewindResponse) Reset() {
 	*x = PgRewindResponse{}
-	mi := &file_pgctldservice_proto_msgTypes[15]
+	mi := &file_pgctldservice_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1015,7 +1096,7 @@ func (x *PgRewindResponse) String() string {
 func (*PgRewindResponse) ProtoMessage() {}
 
 func (x *PgRewindResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pgctldservice_proto_msgTypes[15]
+	mi := &file_pgctldservice_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1028,7 +1109,7 @@ func (x *PgRewindResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PgRewindResponse.ProtoReflect.Descriptor instead.
 func (*PgRewindResponse) Descriptor() ([]byte, []int) {
-	return file_pgctldservice_proto_rawDescGZIP(), []int{15}
+	return file_pgctldservice_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PgRewindResponse) GetMessage() string {
@@ -1102,6 +1183,9 @@ const file_pgctldservice_proto_rawDesc = "" +
 	"\n" +
 	"extra_args\x18\x03 \x03(\tR\textraArgs\"/\n" +
 	"\x13InitDataDirResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\r\n" +
+	"\vKillRequest\"(\n" +
+	"\fKillResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"\xb6\x01\n" +
 	"\x0fPgRewindRequest\x12\x1f\n" +
 	"\vsource_host\x18\x01 \x01(\tR\n" +
@@ -1121,10 +1205,11 @@ const file_pgctldservice_proto_rawDesc = "" +
 	"\bSTARTING\x10\x02\x12\v\n" +
 	"\aRUNNING\x10\x03\x12\f\n" +
 	"\bSTOPPING\x10\x04\x12\x13\n" +
-	"\x0fNOT_INITIALIZED\x10\x052\xa7\x05\n" +
+	"\x0fNOT_INITIALIZED\x10\x052\x8a\x06\n" +
 	"\x06PgCtld\x12B\n" +
 	"\x05Start\x12\x1b.pgctldservice.StartRequest\x1a\x1c.pgctldservice.StartResponse\x12a\n" +
-	"\x04Stop\x12\x1a.pgctldservice.StopRequest\x1a\x1b.pgctldservice.StopResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/v1/postgres/stop\x12H\n" +
+	"\x04Stop\x12\x1a.pgctldservice.StopRequest\x1a\x1b.pgctldservice.StopResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/v1/postgres/stop\x12a\n" +
+	"\x04Kill\x12\x1a.pgctldservice.KillRequest\x1a\x1b.pgctldservice.KillResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/v1/postgres/kill\x12H\n" +
 	"\aRestart\x12\x1d.pgctldservice.RestartRequest\x1a\x1e.pgctldservice.RestartResponse\x12W\n" +
 	"\fReloadConfig\x12\".pgctldservice.ReloadConfigRequest\x1a#.pgctldservice.ReloadConfigResponse\x12f\n" +
 	"\x06Status\x12\x1c.pgctldservice.StatusRequest\x1a\x1d.pgctldservice.StatusResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/api/v1/postgres/status\x12H\n" +
@@ -1145,7 +1230,7 @@ func file_pgctldservice_proto_rawDescGZIP() []byte {
 }
 
 var file_pgctldservice_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pgctldservice_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_pgctldservice_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_pgctldservice_proto_goTypes = []any{
 	(ServerStatus)(0),            // 0: pgctldservice.ServerStatus
 	(*StartRequest)(nil),         // 1: pgctldservice.StartRequest
@@ -1162,33 +1247,37 @@ var file_pgctldservice_proto_goTypes = []any{
 	(*VersionResponse)(nil),      // 12: pgctldservice.VersionResponse
 	(*InitDataDirRequest)(nil),   // 13: pgctldservice.InitDataDirRequest
 	(*InitDataDirResponse)(nil),  // 14: pgctldservice.InitDataDirResponse
-	(*PgRewindRequest)(nil),      // 15: pgctldservice.PgRewindRequest
-	(*PgRewindResponse)(nil),     // 16: pgctldservice.PgRewindResponse
-	(*durationpb.Duration)(nil),  // 17: google.protobuf.Duration
+	(*KillRequest)(nil),          // 15: pgctldservice.KillRequest
+	(*KillResponse)(nil),         // 16: pgctldservice.KillResponse
+	(*PgRewindRequest)(nil),      // 17: pgctldservice.PgRewindRequest
+	(*PgRewindResponse)(nil),     // 18: pgctldservice.PgRewindResponse
+	(*durationpb.Duration)(nil),  // 19: google.protobuf.Duration
 }
 var file_pgctldservice_proto_depIdxs = []int32{
-	17, // 0: pgctldservice.StopRequest.timeout:type_name -> google.protobuf.Duration
-	17, // 1: pgctldservice.RestartRequest.timeout:type_name -> google.protobuf.Duration
+	19, // 0: pgctldservice.StopRequest.timeout:type_name -> google.protobuf.Duration
+	19, // 1: pgctldservice.RestartRequest.timeout:type_name -> google.protobuf.Duration
 	0,  // 2: pgctldservice.StatusResponse.status:type_name -> pgctldservice.ServerStatus
-	17, // 3: pgctldservice.StatusResponse.uptime:type_name -> google.protobuf.Duration
+	19, // 3: pgctldservice.StatusResponse.uptime:type_name -> google.protobuf.Duration
 	1,  // 4: pgctldservice.PgCtld.Start:input_type -> pgctldservice.StartRequest
 	3,  // 5: pgctldservice.PgCtld.Stop:input_type -> pgctldservice.StopRequest
-	5,  // 6: pgctldservice.PgCtld.Restart:input_type -> pgctldservice.RestartRequest
-	7,  // 7: pgctldservice.PgCtld.ReloadConfig:input_type -> pgctldservice.ReloadConfigRequest
-	9,  // 8: pgctldservice.PgCtld.Status:input_type -> pgctldservice.StatusRequest
-	11, // 9: pgctldservice.PgCtld.Version:input_type -> pgctldservice.VersionRequest
-	13, // 10: pgctldservice.PgCtld.InitDataDir:input_type -> pgctldservice.InitDataDirRequest
-	15, // 11: pgctldservice.PgCtld.PgRewind:input_type -> pgctldservice.PgRewindRequest
-	2,  // 12: pgctldservice.PgCtld.Start:output_type -> pgctldservice.StartResponse
-	4,  // 13: pgctldservice.PgCtld.Stop:output_type -> pgctldservice.StopResponse
-	6,  // 14: pgctldservice.PgCtld.Restart:output_type -> pgctldservice.RestartResponse
-	8,  // 15: pgctldservice.PgCtld.ReloadConfig:output_type -> pgctldservice.ReloadConfigResponse
-	10, // 16: pgctldservice.PgCtld.Status:output_type -> pgctldservice.StatusResponse
-	12, // 17: pgctldservice.PgCtld.Version:output_type -> pgctldservice.VersionResponse
-	14, // 18: pgctldservice.PgCtld.InitDataDir:output_type -> pgctldservice.InitDataDirResponse
-	16, // 19: pgctldservice.PgCtld.PgRewind:output_type -> pgctldservice.PgRewindResponse
-	12, // [12:20] is the sub-list for method output_type
-	4,  // [4:12] is the sub-list for method input_type
+	15, // 6: pgctldservice.PgCtld.Kill:input_type -> pgctldservice.KillRequest
+	5,  // 7: pgctldservice.PgCtld.Restart:input_type -> pgctldservice.RestartRequest
+	7,  // 8: pgctldservice.PgCtld.ReloadConfig:input_type -> pgctldservice.ReloadConfigRequest
+	9,  // 9: pgctldservice.PgCtld.Status:input_type -> pgctldservice.StatusRequest
+	11, // 10: pgctldservice.PgCtld.Version:input_type -> pgctldservice.VersionRequest
+	13, // 11: pgctldservice.PgCtld.InitDataDir:input_type -> pgctldservice.InitDataDirRequest
+	17, // 12: pgctldservice.PgCtld.PgRewind:input_type -> pgctldservice.PgRewindRequest
+	2,  // 13: pgctldservice.PgCtld.Start:output_type -> pgctldservice.StartResponse
+	4,  // 14: pgctldservice.PgCtld.Stop:output_type -> pgctldservice.StopResponse
+	16, // 15: pgctldservice.PgCtld.Kill:output_type -> pgctldservice.KillResponse
+	6,  // 16: pgctldservice.PgCtld.Restart:output_type -> pgctldservice.RestartResponse
+	8,  // 17: pgctldservice.PgCtld.ReloadConfig:output_type -> pgctldservice.ReloadConfigResponse
+	10, // 18: pgctldservice.PgCtld.Status:output_type -> pgctldservice.StatusResponse
+	12, // 19: pgctldservice.PgCtld.Version:output_type -> pgctldservice.VersionResponse
+	14, // 20: pgctldservice.PgCtld.InitDataDir:output_type -> pgctldservice.InitDataDirResponse
+	18, // 21: pgctldservice.PgCtld.PgRewind:output_type -> pgctldservice.PgRewindResponse
+	13, // [13:22] is the sub-list for method output_type
+	4,  // [4:13] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -1205,7 +1294,7 @@ func file_pgctldservice_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pgctldservice_proto_rawDesc), len(file_pgctldservice_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -206,9 +206,7 @@ function CountdownTimer({ deadline }: { deadline: string }) {
   const initialRemainingRef = useRef(
     Math.max(1, targetRef.current - Date.now()),
   );
-  const [remaining, setRemaining] = useState(
-    () => initialRemainingRef.current,
-  );
+  const [remaining, setRemaining] = useState(() => initialRemainingRef.current);
   const [appointing, setAppointing] = useState(false);
 
   useEffect(() => {
@@ -269,9 +267,17 @@ export function TopologyGraph({
   } | null>(null);
 
   // Shutdown confirmation dialog state
-  const [revokeTarget, setRevokeTarget] = useState<MultiPoolerWithStatus | null>(null);
+  const [revokeTarget, setRevokeTarget] =
+    useState<MultiPoolerWithStatus | null>(null);
   const [revoking, setRevoking] = useState(false);
   const [revokeError, setRevokeError] = useState<string | null>(null);
+
+  // Kill (SIGKILL) confirmation dialog state
+  const [killTarget, setKillTarget] = useState<MultiPoolerWithStatus | null>(
+    null,
+  );
+  const [killing, setKilling] = useState(false);
+  const [killError, setKillError] = useState<string | null>(null);
 
   const prevDataRef = useRef({
     gateways: [] as MultiGateway[],
@@ -475,8 +481,7 @@ export function TopologyGraph({
     // Compute the center X of the gateway row for alignment
     const gatewayCenterX =
       gateways.length > 0
-        ? gatewayStartX +
-          ((gateways.length - 1) * (NODE_WIDTH + NODE_GAP)) / 2
+        ? gatewayStartX + ((gateways.length - 1) * (NODE_WIDTH + NODE_GAP)) / 2
         : gatewayStartX;
 
     // Create pooler nodes for each group
@@ -555,7 +560,8 @@ export function TopologyGraph({
       const replicaTotalWidth =
         group.replicas.length * NODE_WIDTH +
         (group.replicas.length - 1) * NODE_GAP;
-      const replicaStartX = gatewayCenterX - replicaTotalWidth / 2 + NODE_WIDTH / 2;
+      const replicaStartX =
+        gatewayCenterX - replicaTotalWidth / 2 + NODE_WIDTH / 2;
 
       group.replicas.forEach((replica, replicaIndex) => {
         const replicaId = `pooler-${replica.id?.name || `replica-${groupIndex}-${replicaIndex}`}`;
@@ -643,8 +649,7 @@ export function TopologyGraph({
 
       // Center the stack vertically, shifted down
       const totalOrchHeight =
-        orchs.length * ORCH_NODE_HEIGHT +
-        (orchs.length - 1) * ORCH_NODE_GAP;
+        orchs.length * ORCH_NODE_HEIGHT + (orchs.length - 1) * ORCH_NODE_GAP;
       const orchStartY = REPLICA_Y - totalOrchHeight / 2;
 
       orchs.forEach((orch, index) => {
@@ -652,10 +657,11 @@ export function TopologyGraph({
         const orchName = orch.id?.name || `orch-${index + 1}`;
         const gracePeriods = orchGracePeriods.get(orchName) || [];
         const actingEntry = gracePeriods.find((gp) => gp.acting);
-        const countdownEntry = gracePeriods.find((gp) => !gp.acting && gp.deadline);
+        const countdownEntry = gracePeriods.find(
+          (gp) => !gp.acting && gp.deadline,
+        );
         const showGracePeriod =
-          gracePeriods.length > 0 &&
-          (!!actingEntry || !hasHealthyPrimary);
+          gracePeriods.length > 0 && (!!actingEntry || !hasHealthyPrimary);
         const orchClassName = showGracePeriod
           ? "election-pending-node"
           : clusterUnhealthy
@@ -675,9 +681,7 @@ export function TopologyGraph({
           );
         } else if (countdownEntry && !hasHealthyPrimary) {
           // This orch is counting down to appointment (no primary yet)
-          orchContent = (
-            <CountdownTimer deadline={countdownEntry.deadline} />
-          );
+          orchContent = <CountdownTimer deadline={countdownEntry.deadline} />;
         } else {
           const orchStatus = clusterUnhealthy ? "Recovering" : "Monitoring";
           orchContent = (
@@ -710,9 +714,7 @@ export function TopologyGraph({
                 </div>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 p-3">
                   <div className="text-muted-foreground">Cell</div>
-                  <div className="text-right">
-                    {orch.id?.cell || "unknown"}
-                  </div>
+                  <div className="text-right">{orch.id?.cell || "unknown"}</div>
                 </div>
               </div>
             ),
@@ -771,6 +773,23 @@ export function TopologyGraph({
       setRevoking(false);
     }
   }, [api, revokeTarget]);
+
+  // Handle kill postgres via pgctld Kill (SIGKILL)
+  const handleKillPostgres = useCallback(async () => {
+    if (!killTarget?.id) return;
+    setKilling(true);
+    setKillError(null);
+    try {
+      await api.killPostgres(killTarget.id);
+      setKillTarget(null);
+    } catch (err) {
+      setKillError(
+        err instanceof Error ? err.message : "Failed to kill postgres",
+      );
+    } finally {
+      setKilling(false);
+    }
+  }, [api, killTarget]);
 
   if (loading) {
     return (
@@ -835,6 +854,15 @@ export function TopologyGraph({
           >
             Shutdown Postgres
           </button>
+          <button
+            className="flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-destructive/10 outline-none"
+            onClick={() => {
+              setKillTarget(contextMenu.pooler);
+              setContextMenu(null);
+            }}
+          >
+            Kill Postgres (SIGKILL)
+          </button>
         </div>
       )}
 
@@ -875,6 +903,47 @@ export function TopologyGraph({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {revoking ? "Shutting down..." : "Shutdown"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Kill (SIGKILL) confirmation dialog */}
+      <AlertDialog
+        open={!!killTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setKillTarget(null);
+            setKillError(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Kill Postgres (SIGKILL)</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will send SIGKILL to PostgreSQL on{" "}
+              <span className="font-semibold text-foreground">
+                {killTarget?.id?.name}
+              </span>{" "}
+              in cell{" "}
+              <span className="font-semibold text-foreground">
+                {killTarget?.id?.cell}
+              </span>
+              . This is an unclean kill that leaves the data directory in a
+              dirty state, requiring crash recovery on next start. Use for
+              testing failover and crash recovery only.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {killError && <p className="text-sm text-destructive">{killError}</p>}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={killing}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleKillPostgres}
+              disabled={killing}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {killing ? "Killing..." : "Kill"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

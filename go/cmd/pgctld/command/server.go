@@ -419,6 +419,28 @@ func (s *PgCtldService) InitDataDir(ctx context.Context, req *pb.InitDataDirRequ
 	}, nil
 }
 
+func (s *PgCtldService) Kill(ctx context.Context, req *pb.KillRequest) (*pb.KillResponse, error) {
+	s.logger.InfoContext(ctx, "gRPC Kill request (SIGKILL)")
+
+	dataDir := pgctld.PostgresDataDir(s.poolerDir)
+	pid, err := readPostmasterPID(dataDir)
+	if err != nil {
+		return nil, fmt.Errorf("no postmaster.pid: %w", err)
+	}
+
+	proc, err := os.FindProcess(pid)
+	if err != nil {
+		return nil, fmt.Errorf("find process %d: %w", pid, err)
+	}
+
+	if err := proc.Signal(syscall.SIGKILL); err != nil {
+		return nil, fmt.Errorf("SIGKILL pid %d: %w", pid, err)
+	}
+
+	s.logger.InfoContext(ctx, "Sent SIGKILL to postgres", "pid", pid)
+	return &pb.KillResponse{Message: fmt.Sprintf("SIGKILL sent to pid %d", pid)}, nil
+}
+
 func (s *PgCtldService) PgRewind(ctx context.Context, req *pb.PgRewindRequest) (*pb.PgRewindResponse, error) {
 	s.logger.InfoContext(ctx, "gRPC PgRewind request",
 		"source_host", req.GetSourceHost(),

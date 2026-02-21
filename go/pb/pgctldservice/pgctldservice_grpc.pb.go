@@ -35,6 +35,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	PgCtld_Start_FullMethodName        = "/pgctldservice.PgCtld/Start"
 	PgCtld_Stop_FullMethodName         = "/pgctldservice.PgCtld/Stop"
+	PgCtld_Kill_FullMethodName         = "/pgctldservice.PgCtld/Kill"
 	PgCtld_Restart_FullMethodName      = "/pgctldservice.PgCtld/Restart"
 	PgCtld_ReloadConfig_FullMethodName = "/pgctldservice.PgCtld/ReloadConfig"
 	PgCtld_Status_FullMethodName       = "/pgctldservice.PgCtld/Status"
@@ -53,6 +54,8 @@ type PgCtldClient interface {
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
 	// Stop PostgreSQL server
 	Stop(ctx context.Context, in *StopRequest, opts ...grpc.CallOption) (*StopResponse, error)
+	// Kill PostgreSQL server with SIGKILL (unclean, for testing)
+	Kill(ctx context.Context, in *KillRequest, opts ...grpc.CallOption) (*KillResponse, error)
 	// Restart PostgreSQL server
 	Restart(ctx context.Context, in *RestartRequest, opts ...grpc.CallOption) (*RestartResponse, error)
 	// Reload PostgreSQL configuration
@@ -90,6 +93,16 @@ func (c *pgCtldClient) Stop(ctx context.Context, in *StopRequest, opts ...grpc.C
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StopResponse)
 	err := c.cc.Invoke(ctx, PgCtld_Stop_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pgCtldClient) Kill(ctx context.Context, in *KillRequest, opts ...grpc.CallOption) (*KillResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(KillResponse)
+	err := c.cc.Invoke(ctx, PgCtld_Kill_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +179,8 @@ type PgCtldServer interface {
 	Start(context.Context, *StartRequest) (*StartResponse, error)
 	// Stop PostgreSQL server
 	Stop(context.Context, *StopRequest) (*StopResponse, error)
+	// Kill PostgreSQL server with SIGKILL (unclean, for testing)
+	Kill(context.Context, *KillRequest) (*KillResponse, error)
 	// Restart PostgreSQL server
 	Restart(context.Context, *RestartRequest) (*RestartResponse, error)
 	// Reload PostgreSQL configuration
@@ -194,6 +209,9 @@ func (UnimplementedPgCtldServer) Start(context.Context, *StartRequest) (*StartRe
 }
 func (UnimplementedPgCtldServer) Stop(context.Context, *StopRequest) (*StopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Stop not implemented")
+}
+func (UnimplementedPgCtldServer) Kill(context.Context, *KillRequest) (*KillResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Kill not implemented")
 }
 func (UnimplementedPgCtldServer) Restart(context.Context, *RestartRequest) (*RestartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Restart not implemented")
@@ -266,6 +284,24 @@ func _PgCtld_Stop_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PgCtldServer).Stop(ctx, req.(*StopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PgCtld_Kill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KillRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PgCtldServer).Kill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PgCtld_Kill_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PgCtldServer).Kill(ctx, req.(*KillRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -392,6 +428,10 @@ var PgCtld_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Stop",
 			Handler:    _PgCtld_Stop_Handler,
+		},
+		{
+			MethodName: "Kill",
+			Handler:    _PgCtld_Kill_Handler,
 		},
 		{
 			MethodName: "Restart",
