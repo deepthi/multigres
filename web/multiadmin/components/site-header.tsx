@@ -1,8 +1,5 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { IconSun, IconMoon } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -16,22 +13,6 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 
 type BreadcrumbEntry = { label: string; href?: string };
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="h-8 w-8"
-    >
-      <IconSun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <IconMoon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  );
-}
 
 export function SiteHeader({
   breadcrumbs,
