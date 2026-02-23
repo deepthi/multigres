@@ -74,7 +74,31 @@ Access URLs (after port-forwards start)
 │ Direct pooler (zone1-2) │ psql -h localhost -p 15435 -U postgres │
 └───────────────────────────────┴────────────────────────────────────────────────────────────────────────┘
 
-Teardown
+Step 6 (Optional): Backup and Restore Demo
+
+Run the interactive backup/restore demo after the cluster is up and port-forwards are running:
+
+./backup-restore.sh
+
+The script walks through:
+
+1. List existing backups (an initial full backup of the primary is created on cluster startup)
+2. Perform an incremental backup
+3. List backups again to confirm the new backup appears
+4. Create an `animals` table and insert 100,000 rows
+5. Perform a full backup with the new data
+6. List all backups to show the final state
+
+Press ENTER at each step to advance. Press Ctrl+C to exit.
+
+Prerequisites for the backup demo:
+
+- Cluster deployed and healthy (Steps 1–4 above)
+- Port-forwards running for both infra and the multigres cluster
+- `psql` client installed
+- `bin/multigres` binary built (`make build` from repo root)
+
+Step 7: Teardown
 
 ./teardown.sh
 
